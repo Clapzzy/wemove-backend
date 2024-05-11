@@ -31,6 +31,8 @@ router.post('/signup', async (req, res) => {
 
     newUser.username = req.body.username
     newUser.email = req.body.email
+    newUser.display_name = req.body.display_name
+    newUser.birthday = req.body.birthday
 
     newUser.SetPassword(req.body.password);
     const access_token = helperFunctions.generateToken({ userId: newUser._id })

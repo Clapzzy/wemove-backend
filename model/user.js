@@ -2,11 +2,40 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const { type } = require('os');
 
+const challengeSchema = new mongoose.Schema({
+  description: {
+    type: String,
+    require: true,
+  },
+  type: {
+    type: String,
+    require: true
+  },
+  dueDate: {
+    type: Date,
+    require: true
+  },
+  progress: {
+    type: Number,
+    min: 0,
+    max: 0,
+    default: 0,
+  },
+  challengeID: {
+    type: Number,
+  }
+})
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true
+  },
+  display_name: {
+    type: String,
+    required: true,
+    unique: false
   },
   email: {
     type: String,
@@ -14,20 +43,32 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     unique: true
   },
+  birthday: {
+    type: Date,
+    required: true,
+    unique: false
+  },
+  picture: {
+    type: String,
+    default: "Default"
+  },
   hash: {
     type: String,
   },
   salt: {
     type: String,
   },
-  age: {
-    type: Number,
-    min: 0,
-    max: 120
-  },
   refreshToken: {
     type: String,
     required: true
+  },
+  weeklyChallenges: {
+    type: [challengeSchema],
+    default: []
+  },
+  dailyChallenges: {
+    type: [challengeSchema],
+    default: []
   },
   createdAt: {
     type: Date,
@@ -38,7 +79,6 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: () => Date.now(),
   },
-  hobbies: [String]
 })
 
 
