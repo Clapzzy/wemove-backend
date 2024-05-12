@@ -8,10 +8,12 @@ const jwt = require('jsonwebtoken');
 
 const user = require('./rourte/user');
 const auth = require('./rourte/auth')
+const challenges = require('./rourte/challenges')
 
 app.use(express.json());
 app.use(cors());
 
+app.use('/challenge', challenges)
 app.use('/auth', auth)
 app.use('/user', user);
 
