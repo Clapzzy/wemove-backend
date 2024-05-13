@@ -26,6 +26,10 @@ mongoose.connect(process.env.MONGODB_URL)
     res.json({accessToken : webtoken})
 })*/
 
+app.get("/ping", (req, res) => {
+  res.json({ ping: "hello" })
+})
+
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(" ")[1];
