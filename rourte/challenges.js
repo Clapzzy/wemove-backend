@@ -6,17 +6,23 @@ const challenges = require("../model/challanges");
 const challanges = require('../model/challanges');
 
 router.get("/random", async (req, res) => {
-  const allowedTimeframes = ["daily", "weekly", "monthly"]
-  const timeframe = req.query.timeframe
-  let numberOfChallenges = req.query.numberOfChallenges
+  try {
 
-  if (!allowedTimeframes.includes(timeframe)) {
-    return res.status(400).send({
-      message: "Invalid timeframe query parameter"
-    })
-  }
+    console.log("using")
+    const allowedTimeframes = ["daily", "weekly", "monthly"]
+    let timeframe = req.query.timeframe
+    let numberOfChallenges = req.query.numberOfChallenges
 
-  if (timeframe) {
+    if (!allowedTimeframes.includes(timeframe)) {
+      return res.status(400).send({
+        message: "Invalid timeframe query parameter"
+      })
+    }
+
+    if (!timeframe) {
+      timeframe = "daily"
+    }
+
     const foundChallenges = await challenges.find({ typeTimeFrame: timeframe })
     const returnChallenges = []
 
@@ -33,9 +39,9 @@ router.get("/random", async (req, res) => {
       foundChallenges.splice(num, 1)
     }
     return res.send(returnChallenges)
+  } catch (error) {
+    return res.status(400).send(error)
   }
-
-  res.send("chllla" + timeframe)
 })
 
 
