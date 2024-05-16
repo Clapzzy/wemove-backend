@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const challengeSchema = new mongoose.Schema({
   description: {
     type: String,

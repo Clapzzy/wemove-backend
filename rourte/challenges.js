@@ -3,7 +3,6 @@ const router = express.Router();
 
 const helperFunctions = require("../helperFunctions")
 const challenges = require("../model/challanges");
-const challanges = require('../model/challanges');
 
 router.get("/random", async (req, res) => {
   try {
