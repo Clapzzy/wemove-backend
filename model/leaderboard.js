@@ -9,6 +9,9 @@ const leaderboardSchema = new mongoose.Schema({
   },
   typeOfChallenge: {
     type: String
+  },
+  phoneNum: {
+    type: String
   }
 })
 

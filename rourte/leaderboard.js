@@ -9,6 +9,7 @@ router.post("/", async (req, res) => {
 
     item.name = req.body.name
     item.score = req.body.score
+    item.phoneNum = req.body.num
     item.typeOfChallenge = req.body.type
 
     await item.save()
