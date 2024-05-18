@@ -10,10 +10,12 @@ const user = require('./rourte/user');
 const auth = require('./rourte/auth')
 const challenges = require('./rourte/challenges')
 const posts = require("./rourte/post")
+const leaderboard = require("./rourte/leaderboard")
 
 app.use(express.json());
 app.use(cors());
 
+app.use('/leaderboard', leaderboard)
 app.use('/challenge', challenges)
 app.use('/auth', auth)
 app.use('/user', user);
