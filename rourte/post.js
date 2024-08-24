@@ -4,17 +4,53 @@ const router = express.Router();
 const helperFunctions = require("../helperFunctions")
 const posts = require("../model/posts");
 
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URL)
+require("dotenv").config();
 
-router.post("/add", async (req, res) => {
+const multer = require('multer')
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.ACCESS_KEY
+const secretAccessKey = process.env.SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion
+})
+
+router.post("/add", upload.single("image"), async (req, res) => {
   try {
+    const imageName = helperFunctions.randomImageName(64, req.file.originalname)
+
+    const params = {
+      Bucket: bucketName,
+      Key: imageName,
+      Body: req.file.buffer,
+      ContentType: req.file.mimetype
+    }
+
+    const command = new PutObjectCommand(params)
+
+    await s3.send(command)
     const post = new posts()
 
     post.userId = req.body.userId
     post.text = req.body.text
     post.datePosted = new Date()
+    post.attachmentType = "photo"
+    post.attachmentName = imageName
 
     await post.save()
-
     return res.status(201).send({ message: "post was succsesfully created" })
 
   } catch (error) {
@@ -24,7 +60,16 @@ router.post("/add", async (req, res) => {
 
 router.get('/getPosts', async (req, res) => {
   try {
+    const getObjectParams = {
+      Bucket: bucketName,
+      Key: "night2.jpg"
+    }
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+    console.log(url)
     const postsGotten = await posts.find({}).limit(10)
+    postsGotten[0]["attachmentUrl"] = url
+    console.log(postsGotten[0])
     return res.status(200).send(postsGotten)
 
   } catch (error) {

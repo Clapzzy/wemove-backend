@@ -1,27 +1,29 @@
 require("dotenv").config();
+
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
+const mongoose = require('mongoose');
+
 const app = express();
 const port = 3000;
 const jwt = require('jsonwebtoken');
 
+//All routes
 const user = require('./rourte/user');
 const auth = require('./rourte/auth')
 const challenges = require('./rourte/challenges')
 const posts = require("./rourte/post")
 const leaderboard = require("./rourte/leaderboard")
 
-app.use(express.json());
-app.use(cors());
-
 app.use('/leaderboard', leaderboard)
-app.use('/challenge', challenges)
+app.use('/challenges', challenges)
 app.use('/auth', auth)
 app.use('/user', user);
-app.use('/post', posts)
+app.use('/posts', posts)
 
-mongoose.connect(process.env.MONGODB_URL)
+
+app.use(express.json());
+app.use(cors());
 
 /* app.post('/login', (req, res) => {
     const username = req.body.username
@@ -29,6 +31,8 @@ mongoose.connect(process.env.MONGODB_URL)
     const webtoken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
     res.json({accessToken : webtoken})
 })*/
+
+mongoose.connect(process.env.MONGODB_URL)
 
 app.get("/ping", (req, res) => {
   res.json({ ping: "hello" })
