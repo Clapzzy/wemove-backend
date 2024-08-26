@@ -49,27 +49,30 @@ router.post("/add", upload.single("image"), async (req, res) => {
     post.datePosted = new Date()
     post.attachmentType = "photo"
     post.attachmentName = imageName
+    post.attachmentUrl = ""
 
     await post.save()
     return res.status(201).send({ message: "post was succsesfully created" })
 
   } catch (error) {
+    console.log(error)
     res.status(400).send({ message: error })
   }
 })
 
 router.get('/getPosts', async (req, res) => {
   try {
-    const getObjectParams = {
-      Bucket: bucketName,
-      Key: "night2.jpg"
-    }
-    const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-    console.log(url)
-    const postsGotten = await posts.find({}).limit(10)
-    postsGotten[0]["attachmentUrl"] = url
-    console.log(postsGotten[0])
+
+    //const postsGotten = await posts.find({}).limit(10)
+    //const getObjectParams = {
+    //  Bucket: bucketName,
+    //  Key: postsGotten[4].attachmentName,
+    //}
+    //const command = new GetObjectCommand(getObjectParams);
+    //const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+    //postsGotten[4]["attachmentUrl"] = url
+
     return res.status(200).send(postsGotten)
 
   } catch (error) {

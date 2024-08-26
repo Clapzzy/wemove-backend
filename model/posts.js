@@ -27,6 +27,9 @@ const postSchema = new mongoose.Schema({
   attachmentUrl: {
     type: String
   },
+  attachmentName: {
+    type: String
+  },
   datePosted: {
     type: Date,
   },
