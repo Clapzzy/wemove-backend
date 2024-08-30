@@ -45,7 +45,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const post = new posts()
 
     post.userId = req.body.userId
-    post.text = req.body.text
+    post.description = req.body.description
     post.datePosted = new Date()
     post.attachmentType = "photo"
     post.attachmentName = imageName
