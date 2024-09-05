@@ -12,11 +12,10 @@ function generateRefreshToken(user) {
   return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
 }
 
-const randomImageName = (bytes = 32, originalName) => {
+const randomImageName = (bytes = 32) => {
   const randomHex = crypto.randomBytes(bytes).toString('hex')
-  const imageExtension = originalName.split('.').pop()
 
-  return `${randomHex}.${imageExtension}`
+  return `${randomHex}.jpg`
 }
 
 module.exports = {

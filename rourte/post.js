@@ -30,7 +30,9 @@ const s3 = new S3Client({
 
 router.post("/add", upload.single("image"), async (req, res) => {
   try {
-    const imageName = helperFunctions.randomImageName(64, req.file.originalname)
+	console.log(req.file)
+	console.log(req.body)
+    const imageName = helperFunctions.randomImageName(64)
 
     const params = {
       Bucket: bucketName,
