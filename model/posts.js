@@ -19,7 +19,6 @@ const postSchema = new mongoose.Schema({
   },
   text: {
     type: String,
-    required: true,
   },
   attachmentType: {
     type: String,
@@ -43,3 +42,4 @@ const postSchema = new mongoose.Schema({
 })
 
 module.exports = mongoose.model("posts", postSchema)
+
