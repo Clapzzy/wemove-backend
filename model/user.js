@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  display_name: {
+  displayName: {
     type: String,
     required: true,
     unique: false
@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema({
 
 
 
-userSchema.methods.SetPassword = function(password) {
+userSchema.methods.SetPassword = function (password) {
 
   this.salt = crypto.randomBytes(16).toString("hex")
 
@@ -97,7 +97,7 @@ userSchema.methods.SetPassword = function(password) {
 
 }
 
-userSchema.methods.validatePassword = function(password) {
+userSchema.methods.validatePassword = function (password) {
   const hash = crypto.pbkdf2Sync(password, this.salt, 1001, 64, "sha512").toString("hex")
   return this.hash === hash
 }
