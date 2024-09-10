@@ -15,7 +15,7 @@ router.get("/search", async (req, res) => {
 
     const regexPattern = new RegExp(searchKeyword, 'i')
 
-    if (lastId == null) {
+    if (lastId == null || lastId == '') {
       const users = await user.find({ 'username': { $regex: regexPattern } }, { username: 1, displayName: 1, picture: 1, }).sort({ _id: 1 }).limit(3)
       return res.status(201).send(users)
     }
