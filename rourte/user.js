@@ -6,6 +6,7 @@ const user = require('../model/user');
 
 router.get("/search", async (req, res) => {
   try {
+    console.log('searching ')
     const searchKeyword = req.query.searchKeyword
     const lastId = req.query.lastId
     if (searchKeyword == '') {
