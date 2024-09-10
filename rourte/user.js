@@ -10,7 +10,8 @@ router.get("/search", async (req, res) => {
     const searchKeyword = req.query.searchKeyword
     const lastId = req.query.lastId
     if (searchKeyword == '' || searchKeyword == null) {
-      return res.status(400).send({ message: 'Search input should not be empty!!!' })
+      return res.status(200).send([])
+      //    return res.status(400).send({ message: 'Search input should not be empty!!!' })
     }
 
     const regexPattern = new RegExp(searchKeyword, 'i')
