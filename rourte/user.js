@@ -139,7 +139,7 @@ router.post('/signup', upload.single("image"), async (req, res) => {
       const params = {
         Bucket: bucketName,
         Key: imageName,
-        Body: req.file,
+        Body: req.file.buffer,
         ContentType: 'image/jpeg'
       }
       const command = new PutObjectCommand(params)
