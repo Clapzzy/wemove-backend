@@ -4,6 +4,30 @@ const router = express.Router();
 const helperFunctions = require("../helperFunctions")
 const user = require('../model/user');
 
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URL)
+require("dotenv").config();
+
+const multer = require('multer')
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.ACCESS_KEY
+const secretAccessKey = process.env.SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion
+})
+
 router.get("/search", async (req, res) => {
   try {
     console.log('searching ')
@@ -17,7 +41,18 @@ router.get("/search", async (req, res) => {
     const regexPattern = new RegExp(searchKeyword, 'i')
 
     if (lastId == null || lastId == '') {
-      const users = await user.find({ 'username': { $regex: regexPattern } }, { username: 1, displayName: 1, picture: 1, }).sort({ _id: 1 }).limit(3)
+      const users = await user.find({ 'username': { $regex: regexPattern } }, { username: 1, displayName: 1, picture: 1, pictureName: 1, pictureUrl: 1 }).sort({ _id: 1 }).limit(3)
+      for (const user in users) {
+        if (users[user]['pictureName'] != "Default") {
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: users[user]["pictureName"]
+          }
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          users[user]["pictureUrl"] = url
+        }
+      }
       return res.status(201).send(users)
     }
 
@@ -27,6 +62,34 @@ router.get("/search", async (req, res) => {
 
   } catch (error) {
     return res.status(400).send({ message: error })
+  }
+})
+
+router.post("/changeProfilePicture", upload.single("image"), async (req, res) => {
+  try {
+    console.log(req.file)
+    console.log(req.body)
+
+    const imageName = helperFunctions.randomImageName(64)
+    const buffer = Buffer.from(req.body.image, "base64")
+
+    const params = {
+      Bucket: bucketName,
+      Key: imageName,
+      Body: buffer,
+      ContentType: 'image/jpeg'
+    }
+
+    const command = new PutObjectCommand(params)
+    await s3.send(command)
+
+    const somebody = await user.updateOne({ username: req.body.username }, { pictureName: imageName })
+
+    return res.status(201).send({ message: "post was succsesfully created" })
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({ message: error })
   }
 })
 

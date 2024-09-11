@@ -30,10 +30,10 @@ const s3 = new S3Client({
 
 router.post("/add", upload.single("image"), async (req, res) => {
   try {
-	console.log(req.file)
-	console.log(req.body)
+    console.log(req.file)
+    console.log(req.body)
     const imageName = helperFunctions.randomImageName(64)
-	const buffer = Buffer.from(req.body.image, "base64")
+    const buffer = Buffer.from(req.body.image, "base64")
 
     const params = {
       Bucket: bucketName,
@@ -63,22 +63,27 @@ router.post("/add", upload.single("image"), async (req, res) => {
   }
 })
 
-router.get('/getPosts', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    const postUrls = []
 
-    //const postsGotten = await posts.find({}).limit(10)
-    //const getObjectParams = {
-    //  Bucket: bucketName,
-    //  Key: postsGotten[4].attachmentName,
-    //}
-    //const command = new GetObjectCommand(getObjectParams);
-    //const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-
-    //postsGotten[4]["attachmentUrl"] = url
+    const postsGotten = await posts.find({}).limit(4)
+    for (const post in postsGotten) {
+      console.log(postsGotten[post]['attachmentName'])
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: postsGotten[post]['attachmentName'],
+      }
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      postUrls.push(url)
+      postsGotten[post]["attachmentUrl"] = url
+    }
 
     return res.status(200).send(postsGotten)
 
   } catch (error) {
+    console.log(error)
     return res.status(400).send({ message: error })
   }
 })

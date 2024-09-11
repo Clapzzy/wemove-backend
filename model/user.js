@@ -48,9 +48,13 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: false
   },
-  picture: {
+  pictureName: {
     type: String,
     default: "Default"
+  },
+  pictureUrl: {
+    type: String,
+    default: ""
   },
   hash: {
     type: String,
