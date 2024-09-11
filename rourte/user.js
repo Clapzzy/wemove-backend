@@ -114,7 +114,7 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.post('/signup', async (req, res) => {
+router.post('/signup', upload.single('image'), async (req, res) => {
   try {
     let newUser = new user();
 
@@ -122,6 +122,8 @@ router.post('/signup', async (req, res) => {
     newUser.email = req.body.email
     newUser.displayName = req.body.displayName
     newUser.birthday = req.body.birthday
+
+    console.log(req.body.image)
 
     newUser.SetPassword(req.body.password);
     const access_token = helperFunctions.generateToken({ userId: newUser._id })
