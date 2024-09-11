@@ -123,22 +123,7 @@ router.post('/signup', upload.single('image'), async (req, res) => {
     newUser.displayName = req.body.displayName
     newUser.birthday = req.body.birthday
 
-    if (!req.body.image) {
-
-      const imageName = helperFunctions.randomImageName(64)
-      const buffer = Buffer.from(req.body.image, "base64")
-
-      const params = {
-        Bucket: bucketName,
-        Key: imageName,
-        Body: buffer,
-        ContentType: 'image/jpeg'
-      }
-      const command = new PutObjectCommand(params)
-      await s3.send(command)
-
-      newUser.pictureName = imageName
-    }
+    console.log(req.body.image)
 
     newUser.SetPassword(req.body.password);
     const access_token = helperFunctions.generateToken({ userId: newUser._id })
