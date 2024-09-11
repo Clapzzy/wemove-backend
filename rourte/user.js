@@ -114,7 +114,15 @@ router.post('/login', async (req, res) => {
   }
 })
 
-router.post('/signup', upload.single('image'), async (req, res) => {
+router.get('/ping', upload.single("image"), async (req, res) => {
+  console.log(req.file)
+  if (req.file) {
+    console.log('hello')
+  }
+  res.status(200).send({ ping: "ping" })
+})
+
+router.post('/signup', upload.single("image"), async (req, res) => {
   try {
     let newUser = new user();
 
@@ -123,7 +131,22 @@ router.post('/signup', upload.single('image'), async (req, res) => {
     newUser.displayName = req.body.displayName
     newUser.birthday = req.body.birthday
 
-    console.log(req.body.image)
+    //TODO make this work when image imported from phone
+    if (req.file) {
+
+      const imageName = helperFunctions.randomImageName(64)
+
+      const params = {
+        Bucket: bucketName,
+        Key: imageName,
+        Body: req.file,
+        ContentType: 'image/jpeg'
+      }
+      const command = new PutObjectCommand(params)
+      await s3.send(command)
+
+      newUser.pictureName = imageName
+    }
 
     newUser.SetPassword(req.body.password);
     const access_token = helperFunctions.generateToken({ userId: newUser._id })
