@@ -41,7 +41,23 @@ router.get("/search", async (req, res) => {
     const regexPattern = new RegExp(searchKeyword, 'i')
 
     if (lastId == null || lastId == '') {
-      const users = await user.find({ 'username': { $regex: regexPattern } }, { username: 1, displayName: 1, picture: 1, pictureName: 1, pictureUrl: 1 }).sort({ _id: 1 }).limit(3)
+      const users = await user.find(
+        {
+          $or: [
+            { 'username': { $regex: regexPattern } },
+            { 'displayName': { $regex: regexPattern } }
+          ],
+          _id: { $gt: lastId }
+        },
+        {
+          username: 1,
+          displayName: 1,
+          picture: 1,
+          pictureName: 1,
+          pictureUrl: 1
+        }
+      ).sort({ _id: 1 }).limit(10);
+
       for (const user in users) {
         if (users[user]['pictureName'] != "Default") {
           const getObjectParams = {
@@ -56,7 +72,22 @@ router.get("/search", async (req, res) => {
       return res.status(201).send(users)
     }
 
-    const users = await user.find({ 'username': { $regex: regexPattern }, _id: { $gt: lastId } }, { username: 1, displayName: 1, picture: 1, }).sort({ _id: 1 }).limit(3)
+    const users = await user.find(
+      {
+        $or: [
+          { 'username': { $regex: regexPattern } },
+          { 'displayName': { $regex: regexPattern } }
+        ],
+        _id: { $gt: lastId }
+      },
+      {
+        username: 1,
+        displayName: 1,
+        picture: 1,
+        pictureName: 1,
+        pictureUrl: 1
+      }
+    ).sort({ _id: 1 }).limit(10);
 
     return res.status(201).send(users)
 
