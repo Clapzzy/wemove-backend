@@ -47,7 +47,6 @@ router.get("/search", async (req, res) => {
             { 'username': { $regex: regexPattern } },
             { 'displayName': { $regex: regexPattern } }
           ],
-          _id: { $gt: lastId }
         },
         {
           username: 1,
