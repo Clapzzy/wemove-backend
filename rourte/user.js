@@ -55,7 +55,7 @@ router.get("/search", async (req, res) => {
           pictureName: 1,
           pictureUrl: 1
         }
-      ).sort({ _id: 1 }).limit(10);
+      ).sort({ _id: 1 }).limit(3);
 
       for (const user in users) {
         if (users[user]['pictureName'] != "Default") {
@@ -86,7 +86,7 @@ router.get("/search", async (req, res) => {
         pictureName: 1,
         pictureUrl: 1
       }
-    ).sort({ _id: 1 }).limit(10);
+    ).sort({ _id: 1 }).limit(3);
 
     return res.status(201).send(users)
 
