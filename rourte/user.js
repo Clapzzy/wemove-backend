@@ -59,6 +59,7 @@ router.get("/search", async (req, res) => {
 
       for (const user in users) {
         if (users[user]['pictureName'] != "Default") {
+          console.log('not default')
           const getObjectParams = {
             Bucket: bucketName,
             Key: users[user]["pictureName"]
@@ -87,6 +88,20 @@ router.get("/search", async (req, res) => {
         pictureUrl: 1
       }
     ).sort({ _id: 1 }).limit(5);
+
+    for (const user in users) {
+      if (users[user]['pictureName'] != "Default") {
+        console.log('not default')
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: users[user]["pictureName"]
+        }
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        users[user]["pictureUrl"] = url
+      }
+    }
+
 
     return res.status(201).send(users)
 
