@@ -34,7 +34,8 @@ app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URL)
 
-app.get("/ping", (req, res) => {
+app.post("/ping", (req, res) => {
+  console.log(req.body.username)
   res.json({ ping: "hello" })
 })
 

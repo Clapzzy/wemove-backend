@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+router.use(express.json())
 
 const helperFunctions = require("../helperFunctions")
 const user = require('../model/user');
@@ -26,6 +27,37 @@ const s3 = new S3Client({
     secretAccessKey: secretAccessKey,
   },
   region: bucketRegion
+})
+
+
+router.post('/', async (req, res) => {
+  try {
+    const username = req.body.username
+    if (username == undefined) {
+      return res.status(400).send({ message: "Invalid username ( is undefined)" })
+    }
+
+    const userData = await user.findOne({ username: username }, { refreshToken: 0, salt: 0, hash: 0, email: 0, weeklyChallenges: 0, dailyChallenges: 0, updatedAt: 0 })
+
+    if (userData == null) {
+      return res.status(400).send({ message: `0 found users with username : ${username}` })
+    }
+    if (userData.pictureName != "Default") {
+      const getObjectParams = {
+        Bucket: bucketName,
+        Key: userData.pictureName
+      }
+      const command = new GetObjectCommand(getObjectParams);
+      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      userData.pictureUrl = url
+    }
+
+    return res.status(200).send(userData)
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).send({ message: error })
+  }
 })
 
 router.get("/search", async (req, res) => {
