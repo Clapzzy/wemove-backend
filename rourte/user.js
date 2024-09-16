@@ -30,7 +30,7 @@ const s3 = new S3Client({
 })
 
 
-router.post('/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const username = req.body.username
     if (username == undefined) {
