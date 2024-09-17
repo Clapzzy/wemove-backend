@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const postSchema = require('/posts.js')
 const { type } = require('os');
 
 const challengeSchema = new mongoose.Schema({
@@ -98,7 +97,7 @@ const userSchema = new mongoose.Schema({
     default: () => Date.now(),
   },
   doneChallenges: {
-    type: [postSchema],
+    type: [],
     default: []
   }
 })
