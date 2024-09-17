@@ -3,6 +3,7 @@ const router = express.Router();
 
 const helperFunctions = require("../helperFunctions")
 const posts = require("../model/posts");
+const { user } = require('../model/user')
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URL)
@@ -32,6 +33,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
   try {
     console.log(req.file)
     console.log(req.body)
+    const challengeId = req.body.challengeId
     const username = req.body.username
     const imageName = helperFunctions.randomImageName(64)
     const buffer = Buffer.from(req.body.image, "base64")
@@ -55,6 +57,13 @@ router.post("/add", upload.single("image"), async (req, res) => {
     post.attachmentName = imageName
     post.attachmentUrl = ""
 
+    const result = await user.updateOne(
+      { username: username, 'dailyChallenges.challengeId': challengeId },
+      { $set: { 'dailyChallenges.$.completed': true } }
+    );
+    console.log(result)
+    const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })
+    console.log(result2)
     await post.save()
     return res.status(201).send({ message: "post was succsesfully created" })
 
