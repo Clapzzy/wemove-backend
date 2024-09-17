@@ -3,7 +3,7 @@ const router = express.Router();
 router.use(express.json())
 
 const helperFunctions = require("../helperFunctions")
-const user = require('../model/user');
+const { user, userChallenge } = require('../model/user');
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URL)
@@ -33,12 +33,14 @@ const s3 = new S3Client({
 router.get('/', async (req, res) => {
   try {
     const username = req.query.username
+    console.log(user)
     console.log(username)
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
     }
 
     const userData = await user.findOne({ username: username }, { refreshToken: 0, salt: 0, hash: 0, email: 0, weeklyChallenges: 0, dailyChallenges: 0, updatedAt: 0 })
+    console.log(userData)
 
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })

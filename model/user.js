@@ -15,15 +15,28 @@ const challengeSchema = new mongoose.Schema({
     type: Date,
     require: true
   },
+  completed: {
+    type: Boolean,
+    default: false
+  },
   progress: {
     type: Number,
     min: 0,
     max: 0,
     default: 0,
   },
-  challengeID: {
-    type: Number,
-  }
+  pictureUrl: {
+    type: String,
+    default: ''
+  },
+  pictureName: {
+    type: String,
+    default: ''
+  },
+  challengeId: {
+    type: mongoose.Schema.ObjectId
+  },
+
 })
 
 const userSchema = new mongoose.Schema({
@@ -107,4 +120,7 @@ userSchema.methods.validatePassword = function (password) {
 }
 
 
-module.exports = mongoose.model("user", userSchema)
+module.exports = {
+  user: mongoose.model("user", userSchema),
+  userChallenge: mongoose.model('userChallenge', challengeSchema)
+}

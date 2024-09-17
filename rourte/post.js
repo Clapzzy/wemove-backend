@@ -32,6 +32,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
   try {
     console.log(req.file)
     console.log(req.body)
+    const username = req.body.username
     const imageName = helperFunctions.randomImageName(64)
     const buffer = Buffer.from(req.body.image, "base64")
 
