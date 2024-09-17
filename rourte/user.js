@@ -32,7 +32,8 @@ const s3 = new S3Client({
 
 router.get('/', async (req, res) => {
   try {
-    const username = req.params.username
+    const username = req.query.username
+    console.log(username)
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
     }
