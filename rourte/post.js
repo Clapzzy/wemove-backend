@@ -60,21 +60,20 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     const result = await user.updateOne(
       {
-        $or:
-          [
-            { username: username, 'dailyChallenges.challengeId': challengeId },
-            { username: username, 'weeklyChallenges.challengeId': challengeId }
-          ]
+        username: username,
+        $or: [
+          { 'dailyChallenges.challengeId': challengeId },
+          { 'weeklyChallenges.challengeId': challengeId }
+        ]
       },
       {
         $set: {
-          'dailyChallenges.$.completed': {
-            $cond: [{ 'dailyChallenges.$.challengeId': { $eq: challengeId } }, true, false]
-          },
-          'weeklyChallenges.$.completed': {
-            $cond: [{ 'weeklyChallenges.$.challengeId': { $eq: challengeId } }, true, false]
-          }
+          'dailyChallenges.$[elem].completed': true,
+          'weeklyChallenges.$[elem].completed': true
         }
+      },
+      {
+        arrayFilters: [{ 'elem.challengeId': challengeId }]
       }
     );
     const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })
