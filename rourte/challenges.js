@@ -59,7 +59,7 @@ router.get("/", async (req, res) => {
     }
 
 
-    if (userData.weeklyChallenges.length == 0 || userData.weeklyChallenges?.dueDate?.getTime() < today.getTime()) {
+    if (userData.weeklyChallenges.length == 0) {
 
       await user.updateOne({ username: username }, { $set: { weeklyChallenges: [] } })
       const foundChallenges = await challenges.aggregate([
@@ -81,7 +81,7 @@ router.get("/", async (req, res) => {
       await user.updateOne({ username: username }, { $set: { weeklyChallenges: [...allChallenges] } })
     }
 
-    if (userData.dailyChallenges.length == 0 || userData.dailyChallenges?.dueDate?.getTime() > today.getTime()) {
+    if (userData.dailyChallenges.length == 0) {
 
       await user.updateOne({ username: username }, { $set: { dailyChallenges: [] } })
 
