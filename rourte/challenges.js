@@ -47,7 +47,7 @@ router.get("/random", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const username = req.query.username
-    const today = Math.Floor(new Date().getTime() / 1000);
+    const today = Math.floor(new Date().getTime() / 1000);
 
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
