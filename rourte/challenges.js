@@ -47,7 +47,7 @@ router.get("/random", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const username = req.query.username
-    const today = new Date();
+    const today = Math.Floor(new Date().getTime() / 1000);
 
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
@@ -58,7 +58,7 @@ router.get("/", async (req, res) => {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
 
-	  console.log(userData)
+    console.log(today)
 
     if (userData.weeklyChallenges.length == 0) {
 
@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
       const chalToAdd = new userChallenge()
 
       const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
-      const unixTimeNextWeekStart = Math.floor(nextWeek.getTime());
+      const unixTimeNextWeekStart = Math.floor(nextWeek.getTime() / 1000);
 
       const allChallenges = []
 
@@ -92,7 +92,7 @@ router.get("/", async (req, res) => {
       ])
 
       const nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-      const unixTimeNextDayStart = Math.floor(nextDay.getTime());
+      const unixTimeNextDayStart = Math.floor(nextDay.getTime() / 1000);
       const allChallenges = []
 
       for (let i = 0; i < foundChallenges.length; i++) {
@@ -111,7 +111,7 @@ router.get("/", async (req, res) => {
 
     return res.status(200).send({ dailyChallenges: userData.dailyChallenges, weeklyChallenges: userData.weeklyChallenges })
   } catch (error) {
-	  console.log(error)
+    console.log(error)
     return res.status(400).send({
       message: error.message
     })
