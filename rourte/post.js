@@ -66,7 +66,16 @@ router.post("/add", upload.single("image"), async (req, res) => {
             { username: username, 'weeklyChallenges.challengeId': challengeId }
           ]
       },
-      { $set: { 'dailyChallenges.$.completed': true } }
+      {
+        $set: {
+          'dailyChallenges.$.completed': {
+            $cond: [{ 'dailyChallenges.$.completed': { $eq: challengeId } }, true, false]
+          },
+          'weeklyChallenges.$.completed': {
+            $cond: [{ 'weeklyChallenges.$.completed': { $eq: challengeId } }, true, false]
+          }
+        }
+      }
     );
     const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })
     await post.save()
