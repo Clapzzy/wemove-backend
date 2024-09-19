@@ -54,7 +54,7 @@ router.get("/", async (req, res) => {
     }
 
     const userData = await user.findOne({ username: username }, { refreshToken: 0, salt: 0, hash: 0, email: 0, updatedAt: 0 })
-    console.log(userData)
+    console.log(userData.dailyChallenge.dueDate)
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
