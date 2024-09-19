@@ -20,6 +20,9 @@ const postSchema = new mongoose.Schema({
   text: {
     type: String,
   },
+  challengeDesc: {
+    type: String
+  },
   attachmentType: {
     type: String,
   },
@@ -30,7 +33,7 @@ const postSchema = new mongoose.Schema({
     type: String
   },
   datePosted: {
-    type: Date,
+    type: BigInt,
   },
   comments: [comment],
   likes: {

@@ -37,6 +37,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const username = req.body.username
     const imageName = helperFunctions.randomImageName(64)
     const buffer = Buffer.from(req.body.image, "base64")
+    const datePosted = Math.floor(new Date().getTime() / 1000)
 
     const params = {
       Bucket: bucketName,
@@ -52,7 +53,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     post.userId = req.body.userId
     post.text = req.body.description
-    post.datePosted = new Date()
+    post.datePosted = datePosted
     post.attachmentType = "photo"
     post.attachmentName = imageName
     post.attachmentUrl = ""
@@ -61,9 +62,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       { username: username, 'dailyChallenges.challengeId': challengeId },
       { $set: { 'dailyChallenges.$.completed': true } }
     );
-    console.log(result)
     const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })
-    console.log(result2)
     await post.save()
     return res.status(201).send({ message: "post was succsesfully created" })
 
