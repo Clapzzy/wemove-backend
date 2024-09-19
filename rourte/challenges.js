@@ -58,6 +58,7 @@ router.get("/", async (req, res) => {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
 
+	  console.log(userData)
 
     if (userData.weeklyChallenges.length == 0) {
 
@@ -110,6 +111,7 @@ router.get("/", async (req, res) => {
 
     return res.status(200).send({ dailyChallenges: userData.dailyChallenges, weeklyChallenges: userData.weeklyChallenges })
   } catch (error) {
+	  console.log(error)
     return res.status(400).send({
       message: error.message
     })

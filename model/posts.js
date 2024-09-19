@@ -36,7 +36,7 @@ const postSchema = new mongoose.Schema({
     type: String
   },
   datePosted: {
-    type: BigInt,
+    type: Number,
   },
   comments: [comment],
   likes: {
