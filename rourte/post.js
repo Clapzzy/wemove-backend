@@ -69,10 +69,10 @@ router.post("/add", upload.single("image"), async (req, res) => {
       {
         $set: {
           'dailyChallenges.$.completed': {
-            $cond: [{ 'dailyChallenges.$.completed': { $eq: challengeId } }, true, false]
+            $cond: [{ 'dailyChallenges.$.challengeId': { $eq: challengeId } }, true, false]
           },
           'weeklyChallenges.$.completed': {
-            $cond: [{ 'weeklyChallenges.$.completed': { $eq: challengeId } }, true, false]
+            $cond: [{ 'weeklyChallenges.$.challengeId': { $eq: challengeId } }, true, false]
           }
         }
       }
