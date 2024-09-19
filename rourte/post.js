@@ -59,7 +59,13 @@ router.post("/add", upload.single("image"), async (req, res) => {
     post.attachmentUrl = ""
 
     const result = await user.updateOne(
-      { username: username, 'dailyChallenges.challengeId': challengeId },
+      {
+        $or:
+          [
+            { username: username, 'dailyChallenges.challengeId': challengeId },
+            { username: username, 'weeklyChallenges.challengeId': challengeId }
+          ]
+      },
       { $set: { 'dailyChallenges.$.completed': true } }
     );
     const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })

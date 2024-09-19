@@ -57,7 +57,6 @@ router.get("/", async (req, res) => {
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
-	  console.log(typeof userData.dailyChallenges[0].dueDate)
 
 
     if (userData.weeklyChallenges.length == 0 || userData.weeklyChallenges?.dueDate?.getTime() < today.getTime()) {

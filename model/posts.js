@@ -23,6 +23,9 @@ const postSchema = new mongoose.Schema({
   challengeDesc: {
     type: String
   },
+  challengeId: {
+    type: mongoose.Schema.ObjectId
+  },
   attachmentType: {
     type: String,
   },

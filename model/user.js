@@ -12,7 +12,7 @@ const challengeSchema = new mongoose.Schema({
     require: true
   },
   dueDate: {
-    type: Date,
+    type: BigInt,
     require: true
   },
   completed: {
