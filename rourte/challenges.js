@@ -48,6 +48,7 @@ router.get("/", async (req, res) => {
   try {
     const username = req.query.username
     const today = Math.floor(new Date().getTime() / 1000);
+    const todayDate = new Date(today * 1000);
 
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
@@ -60,7 +61,7 @@ router.get("/", async (req, res) => {
 
     console.log(today)
 
-    if (userData.weeklyChallenges.length == 0 || userData.weeklyChallenges.dueDate < today) {
+    if (userData.weeklyChallenges.length == 0 || userData.weeklyChallenges.dueDate < todayDate) {
 
       await user.updateOne({ username: username }, { $set: { weeklyChallenges: [] } })
       const foundChallenges = await challenges.aggregate([
@@ -69,7 +70,7 @@ router.get("/", async (req, res) => {
       ])
       const chalToAdd = new userChallenge()
 
-      const nextWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
+      const nextWeek = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 7);
       const unixTimeNextWeekStart = Math.floor(nextWeek.getTime() / 1000);
 
       const allChallenges = []
@@ -91,7 +92,7 @@ router.get("/", async (req, res) => {
         { $sample: { size: 2 } }
       ])
 
-      const nextDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+      const nextDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 1);
       const unixTimeNextDayStart = Math.floor(nextDay.getTime() / 1000);
       const allChallenges = []
 
