@@ -49,6 +49,8 @@ router.get("/", async (req, res) => {
     const username = req.query.username
     const today = Math.floor(new Date().getTime() / 1000);
     const todayDate = new Date(today * 1000);
+    const dailyChallenges = []
+    const weeklyChallenges = []
 
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
@@ -74,14 +76,13 @@ router.get("/", async (req, res) => {
       const nextWeek = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 7);
       const unixTimeNextWeekStart = Math.floor(nextWeek.getTime() / 1000);
 
-      const allChallenges = []
 
       chalToAdd.type = 'weekly'
       chalToAdd.description = foundChallenges[0].description
       chalToAdd.dueDate = unixTimeNextWeekStart
       chalToAdd.challengeId = foundChallenges[0]['_id']
-      allChallenges.push(chalToAdd)
-      await user.updateOne({ username: username }, { $set: { weeklyChallenges: [...allChallenges] } })
+      weeklyChallenges.push(chalToAdd)
+      await user.updateOne({ username: username }, { $set: { weeklyChallenges: [...weeklyChallenges] } })
     }
 
     if (userData.dailyChallenges.length == 0 || userData.dailyChallenges[0].dueDate < today) {
@@ -95,7 +96,6 @@ router.get("/", async (req, res) => {
 
       const nextDay = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate() + 1);
       const unixTimeNextDayStart = Math.floor(nextDay.getTime() / 1000);
-      const allChallenges = []
 
       for (let i = 0; i < foundChallenges.length; i++) {
         const chalToAdd = new userChallenge()
@@ -104,14 +104,14 @@ router.get("/", async (req, res) => {
         chalToAdd.dueDate = unixTimeNextDayStart
         chalToAdd.challengeId = foundChallenges[i]['_id']
 
-        allChallenges.push(chalToAdd)
+        dailyChallenges.push(chalToAdd)
       }
 
-      console.log(allChallenges)
-      await user.updateOne({ username: username }, { $set: { dailyChallenges: [...allChallenges] } })
+      console.log(dailyChallenges)
+      await user.updateOne({ username: username }, { $set: { dailyChallenges: [...dailyChallenges] } })
     }
 
-    return res.status(200).send({ dailyChallenges: userData.dailyChallenges, weeklyChallenges: userData.weeklyChallenges })
+    return res.status(200).send({ dailyChallenges: dailyChallenges.length > 0 ? dailyChallenges : userData.dailyChallenges, weeklyChallenges: weeklyChallenges.length > 0 ? weeklyChallenges : userData.weeklyChallenges })
   } catch (error) {
     console.log(error)
     return res.status(400).send({
