@@ -34,6 +34,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
     console.log(req.file)
     console.log(req.body)
     const challengeId = req.body.challengeId
+    const challengeDesc = req.body.challengeDesc
     const username = req.body.username
     const imageName = helperFunctions.randomImageName(64)
     const buffer = Buffer.from(req.body.image, "base64")
@@ -53,6 +54,8 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     post.userId = req.body.userId
     post.text = req.body.description
+    post.challengeDesc = challengeDesc
+    post.challengeId = challengeId
     post.datePosted = datePosted
     post.attachmentType = "photo"
     post.attachmentName = imageName
@@ -88,8 +91,12 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
+    const lastId = req.query.lastId
     const postUrls = []
 
+    if (lastId == null || lastId == '') {
+      const postsFound = posts.find({}, projection, options)
+    }
     const postsGotten = await posts.find({}).limit(4)
     for (const post in postsGotten) {
       console.log(postsGotten[post]['attachmentName'])
