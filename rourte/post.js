@@ -40,6 +40,9 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const buffer = Buffer.from(req.body.image, "base64")
     const datePosted = Math.floor(new Date().getTime() / 1000)
 
+    const userFound = await user.findOne({ username: username })
+
+
     const params = {
       Bucket: bucketName,
       Key: imageName,
@@ -53,12 +56,15 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const post = new posts()
 
     post.text = req.body.description
+    post.username = username
+    post.userPfp = userFound.pictureName
     post.challengeDesc = challengeDesc
     post.challengeId = challengeId
     post.datePosted = datePosted
     post.attachmentType = "photo"
     post.attachmentName = imageName
     post.attachmentUrl = ""
+
 
     const result = await user.updateOne(
       {
@@ -97,9 +103,7 @@ router.get('/', async (req, res) => {
       const postsFound = await posts.find({}).sort({ _id: -1 }).limit(5)
 
       for (const post in postsFound) {
-        console.log(postsFound[post]['userId'])
         const userFound = await user.findOne({ username: postsFound[post]['username'] })
-        console.log(userFound)
         postsFound[post]['username'] = userFound.username
 
         if (userFound.pictureName != 'Default') {
