@@ -93,6 +93,49 @@ router.post("/add", upload.single("image"), async (req, res) => {
   }
 })
 
+router.get('/user', async (req, res) => {
+  try {
+    const lastId = req.query.lastId
+    const username = req.query.username
+    console.log(username)
+
+    if (lastId == null || lastId == '') {
+      const postsFound = await posts.find({ username: username }).sort({ _id: -1 }).limit(5)
+
+      for (const post in postsFound) {
+        if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: postsFound[post]["attachmentName"]
+          }
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          postsFound[post]["attachmentUrl"] = url
+        }
+      }
+      return res.status(200).send(postsFound)
+    }
+
+    const postsFound = await posts.find({ _id: { $lt: lastId }, username: username }).sort({ _id: -1 }).limit(5)
+
+    for (const post in postsFound) {
+      if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: postsFound[post]["attachmentName"]
+        }
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        postsFound[post]["attachmentUrl"] = url
+      }
+    }
+    return res.status(200).send(postsFound)
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).send({ message: error })
+  }
+})
 router.get('/', async (req, res) => {
   try {
     const lastId = req.query.lastId
@@ -133,6 +176,19 @@ router.get('/', async (req, res) => {
     ).sort({ _id: -1 }).limit(5)
 
     for (const post in postsFound) {
+      const userFound = await user.findOne({ username: postsFound[post]['username'] })
+      postsFound[post]['username'] = userFound.username
+
+      if (userFound.pictureName != 'Default') {
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: userFound.pictureName
+        }
+        const command = new GetObjectCommand(getObjectParams)
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+        postsFound[post]['userPfp'] = url
+      }
+
       if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
         const getObjectParams = {
           Bucket: bucketName,
