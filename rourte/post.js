@@ -57,7 +57,6 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     post.text = req.body.description
     post.username = username
-    post.userPfp = userFound.pictureName
     post.challengeDesc = challengeDesc
     post.challengeId = challengeId
     post.datePosted = datePosted
