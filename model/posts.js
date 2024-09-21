@@ -17,6 +17,12 @@ const postSchema = new mongoose.Schema({
   userId: {
     type: mongoose.SchemaTypes.ObjectId,
   },
+  username: {
+    type: String
+  },
+  userPfp: {
+    type: String
+  },
   text: {
     type: String,
   },

@@ -3,14 +3,14 @@ const router = express.Router();
 
 const helperFunctions = require("../helperFunctions")
 const posts = require("../model/posts");
-const { user } = require('../model/user')
+const { user, userChallenge } = require('../model/user')
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URL)
 require("dotenv").config();
 
 const multer = require('multer')
-const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand, GetObjectLockConfigurationCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
 const storage = multer.memoryStorage()
@@ -52,7 +52,6 @@ router.post("/add", upload.single("image"), async (req, res) => {
     await s3.send(command)
     const post = new posts()
 
-    post.userId = req.body.userId
     post.text = req.body.description
     post.challengeDesc = challengeDesc
     post.challengeId = challengeId
@@ -95,22 +94,53 @@ router.get('/', async (req, res) => {
     const postUrls = []
 
     if (lastId == null || lastId == '') {
-      const postsFound = posts.find({}, projection, options)
-    }
-    const postsGotten = await posts.find({}).limit(4)
-    for (const post in postsGotten) {
-      console.log(postsGotten[post]['attachmentName'])
-      const getObjectParams = {
-        Bucket: bucketName,
-        Key: postsGotten[post]['attachmentName'],
+      const postsFound = await posts.find({}).sort({ _id: -1 }).limit(5)
+
+      for (const post in postsFound) {
+        console.log(postsFound[post]['userId'])
+        const userFound = await user.findOne({ username: postsFound[post]['username'] })
+        console.log(userFound)
+        postsFound[post]['username'] = userFound.username
+
+        if (userFound.pictureName != 'Default') {
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: userFound.pictureName
+          }
+          const command = new GetObjectCommand(getObjectParams)
+          const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+          postsFound[post]['userPfp'] = url
+        }
+        console.log(postsFound[post]["attachmentName"])
+        if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
+          const getObjectParams = {
+            Bucket: bucketName,
+            Key: postsFound[post]["attachmentName"]
+          }
+          const command = new GetObjectCommand(getObjectParams);
+          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          postsFound[post]["attachmentUrl"] = url
+        }
       }
-      const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-      postUrls.push(url)
-      postsGotten[post]["attachmentUrl"] = url
+      return res.status(200).send(postsFound)
     }
 
-    return res.status(200).send(postsGotten)
+    const postsFound = await posts.find(
+      { _id: { $lt: lastId } }
+    ).sort({ _id: -1 }).limit(5)
+
+    for (const post in postsFound) {
+      if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
+        const getObjectParams = {
+          Bucket: bucketName,
+          Key: postsFound[post]["attachmentName"]
+        }
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        postsFound[post]["attachmentUrl"] = url
+      }
+    }
+    return res.status(200).send(postsFound)
 
   } catch (error) {
     console.log(error)
