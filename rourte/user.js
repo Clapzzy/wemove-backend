@@ -94,13 +94,7 @@ router.get("/search", async (req, res) => {
 
       for (const user in users) {
         if (users[user]['pictureName'] != "Default") {
-          console.log('not default')
-          const getObjectParams = {
-            Bucket: bucketName,
-            Key: users[user]["pictureName"]
-          }
-          const command = new GetObjectCommand(getObjectParams);
-          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          const url = await helperFunctions.getImageUrlS3(users[user]['pictureName'])
           users[user]["pictureUrl"] = url
         }
       }
@@ -126,13 +120,7 @@ router.get("/search", async (req, res) => {
 
     for (const user in users) {
       if (users[user]['pictureName'] != "Default") {
-        console.log('not default')
-        const getObjectParams = {
-          Bucket: bucketName,
-          Key: users[user]["pictureName"]
-        }
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        const url = await helperFunctions.getImageUrlS3(users[user]['pictureName'])
         users[user]["pictureUrl"] = url
       }
     }

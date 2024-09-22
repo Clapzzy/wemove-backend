@@ -34,6 +34,18 @@ const randomImageName = (bytes = 32) => {
   return `${randomHex}.jpg`
 }
 
+async function getImageUrlS3(imageName) {
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: imageName
+  }
+
+  const command = new GetObjectCommand(getObjectParams);
+  const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+
+  return url
+}
+
 async function uploadBase64ToS3(imageName, base64Image) {
   // Remove the "data:image/jpeg;base64," part if it exists
   const base64Data = base64Image.replace(/^data:image\/jpeg;base64,/, "");
@@ -57,4 +69,5 @@ module.exports = {
   "generateToken": generateToken,
   "randomImageName": randomImageName,
   "uploadBase64ToS3": uploadBase64ToS3,
+  "getImageUrlS3": getImageUrlS3,
 }

@@ -69,6 +69,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  backgroundName: {
+    type: String,
+    default: "Default"
+  },
+  backgroundUrl: {
+    type: String,
+    default: ''
+  },
   hash: {
     type: String,
   },
