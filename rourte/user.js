@@ -145,7 +145,6 @@ router.post("/updateProfile", async (req, res) => {
     }
 
     // Update display username
-    existingUser.displayName = displayUsername;
 
     // Handle profile picture
     if (displayName) {
@@ -166,7 +165,8 @@ router.post("/updateProfile", async (req, res) => {
     }
 
     // Save updated user
-    await existingUser.save();
+    console.log(existingUser)
+    await existingUser.save(err => console.log(err));
 
     return res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
