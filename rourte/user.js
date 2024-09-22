@@ -162,7 +162,7 @@ router.post("/updateProfile", async (req, res) => {
 
     // Save updated user
     console.log(existingUser)
-    await existingUser.save(err => console.log(err));
+    await existingUser.save();
 
     return res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
