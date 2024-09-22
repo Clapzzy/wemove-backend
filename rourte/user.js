@@ -133,8 +133,8 @@ router.get("/search", async (req, res) => {
 router.post("/updateProfile", async (req, res) => {
   try {
     console.log("updating Profile")
-    const { username, displayUsername, pfpImage, backgroundImage } = req.body;
-    console.log(username, displayUsername, pfpImage, backgroundImage)
+    const { username, displayName, pfpImage, backgroundImage } = req.body;
+    console.log(username, displayName, pfpImage, backgroundImage)
 
     // Check if user exists
     const existingUser = await user.findOne({ username });
@@ -150,7 +150,7 @@ router.post("/updateProfile", async (req, res) => {
     if (pfpImage) {
       const pfpName = helperFunctions.randomImageName(64);
       await helperFunctions.uploadBase64ToS3(pfpName, pfpImage);
-      existingUser.pfpName = pfpName;
+      existingUser.pictureName = pfpName;
     }
 
     // Handle background picture
