@@ -31,8 +31,6 @@ const s3 = new S3Client({
 
 router.post("/add", upload.single("image"), async (req, res) => {
   try {
-    console.log(req.file)
-    console.log(req.body)
     const challengeId = req.body.challengeId
     const challengeDesc = req.body.challengeDesc
     const username = req.body.username
@@ -97,7 +95,6 @@ router.get('/user', async (req, res) => {
   try {
     const lastId = req.query.lastId
     const username = req.query.username
-    console.log(username)
 
     if (lastId == null || lastId == '') {
       const postsFound = await posts.find({ username: username }).sort({ _id: -1 }).limit(5)
@@ -157,7 +154,6 @@ router.get('/', async (req, res) => {
           const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
           postsFound[post]['userPfp'] = url
         }
-        console.log(postsFound[post]["attachmentName"])
         if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
           const getObjectParams = {
             Bucket: bucketName,

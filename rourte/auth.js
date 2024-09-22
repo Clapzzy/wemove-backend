@@ -11,8 +11,6 @@ const { default: mongoose } = require('mongoose');
 router.post("/token", async (req, res) => {
   const refresh_token = req.body.token
   const found_token = await tokens.findOne({ refreshToken: refresh_token }).limit(1)
-  console.log(found_token)
-  console.log(refresh_token)
   if (refresh_token == null) return res.sendStatus(401)
   if (found_token == null) return res.sendStatus(403)
   jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {

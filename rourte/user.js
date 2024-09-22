@@ -33,14 +33,11 @@ const s3 = new S3Client({
 router.get('/', async (req, res) => {
   try {
     const username = req.query.username
-    console.log(user)
-    console.log(username)
     if (username == undefined) {
       return res.status(400).send({ message: "Invalid username ( is undefined)" })
     }
 
     const userData = await user.findOne({ username: username }, { refreshToken: 0, salt: 0, hash: 0, email: 0, weeklyChallenges: 0, dailyChallenges: 0, updatedAt: 0 })
-    console.log(userData)
 
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
@@ -65,7 +62,6 @@ router.get('/', async (req, res) => {
 
 router.get("/search", async (req, res) => {
   try {
-    console.log('searching ')
     const searchKeyword = req.query.searchKeyword
     const lastId = req.query.lastId
     if (searchKeyword == '' || searchKeyword == null) {
@@ -135,18 +131,18 @@ router.get("/search", async (req, res) => {
 
 
 router.post("/updateProfile", async (req, res) => {
-	console.log("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
+  console.log("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
   try {
-	  console.log("updating Profile")
+    console.log("updating Profile")
     const { username, displayUsername, pfpImage, backgroundImage } = req.body;
-	  console.log(username, diplayUsername, pfpImage, backgroundImage)
+    console.log(username, diplayUsername, pfpImage, backgroundImage)
 
     // Check if user exists
     const existingUser = await user.findOne({ username });
     if (!existingUser) {
       return res.status(404).send({ message: "User not found" });
     }
-	  console.log(existingUser)
+    console.log(existingUser)
 
     if (displayName) {
       existingUser.displayName = displayName
@@ -171,7 +167,7 @@ router.post("/updateProfile", async (req, res) => {
 
     return res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
-	  console.log(error)
+    console.log(error)
     res.status(400).send({ message: error.message });
   }
 });
@@ -199,7 +195,6 @@ router.post('/login', async (req, res) => {
 })
 
 router.get('/ping', upload.single("image"), async (req, res) => {
-  console.log(req.file)
   if (req.file) {
     console.log('hello')
   }

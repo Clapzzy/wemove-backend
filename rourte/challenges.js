@@ -8,7 +8,6 @@ const { user, userChallenge } = require('../model/user');
 router.get("/random", async (req, res) => {
   try {
 
-    console.log("using")
     const allowedTimeframes = ["daily", "weekly", "monthly"]
     let timeframe = req.query.timeframe
     let numberOfChallenges = req.query.numberOfChallenges
@@ -61,7 +60,6 @@ router.get("/", async (req, res) => {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
 
-    console.log(today)
 
 
     if (userData.weeklyChallenges.length == 0 || userData.weeklyChallenges[0].dueDate < today) {
@@ -107,7 +105,6 @@ router.get("/", async (req, res) => {
         dailyChallenges.push(chalToAdd)
       }
 
-      console.log(dailyChallenges)
       await user.updateOne({ username: username }, { $set: { dailyChallenges: [...dailyChallenges] } })
     }
 
