@@ -145,33 +145,48 @@ router.get("/search", async (req, res) => {
   }
 })
 
-router.post("/changeProfilePicture", upload.single("image"), async (req, res) => {
+
+router.post("/updateProfile", async (req, res) => {
   try {
-    console.log(req.file)
-    console.log(req.body)
+    const { username, displayUsername, pfpImage, backgroundImage } = req.body;
 
-    const imageName = helperFunctions.randomImageName(64)
-    const buffer = Buffer.from(req.body.image, "base64")
-
-    const params = {
-      Bucket: bucketName,
-      Key: imageName,
-      Body: buffer,
-      ContentType: 'image/jpeg'
+    // Check if user exists
+    const existingUser = await user.findOne({ username });
+    if (!existingUser) {
+      return res.status(404).send({ message: "User not found" });
     }
 
-    const command = new PutObjectCommand(params)
-    await s3.send(command)
+    // Update display username
+    existingUser.displayName = displayUsername;
 
-    const somebody = await user.updateOne({ username: req.body.username }, { pictureName: imageName })
+    // Handle profile picture
+    if (displayName) {
+      existingUser.displayName = displayName
+    }
 
-    return res.status(201).send({ message: "post was succsesfully created" })
+    if (pfpImage) {
+      const pfpName = helperFunctions.randomImageName(64);
+      await helperFunctions.uploadBase64ToS3(pfpName, pfpImage);
+      existingUser.pfpName = pfpName;
+    }
 
+    // Handle background picture
+    if (backgroundImage) {
+      const bgName = helperFunctions.randomImageName(64);
+      await helperFunctions.uploadBase64ToS3(bgName, backgroundImage);
+      existingUser.backgroundName = bgName;
+    }
+
+    // Save updated user
+    await existingUser.save();
+
+    return res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
-    console.log(error)
-    res.status(400).send({ message: error })
+    console.error(error);
+    res.status(400).send({ message: error.message });
   }
-})
+});
+
 
 router.post('/login', async (req, res) => {
   let foundUser = await user.findOne({ email: req.body.email })

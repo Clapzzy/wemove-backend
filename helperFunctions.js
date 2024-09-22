@@ -4,6 +4,22 @@ const mongoose = require('mongoose');
 const crypto = require('crypto')
 require("dotenv").config();
 
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
+const bucketName = process.env.BUCKET_NAME
+const bucketRegion = process.env.BUCKET_REGION
+const accessKey = process.env.ACCESS_KEY
+const secretAccessKey = process.env.SECRET_ACCESS_KEY
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey,
+    secretAccessKey: secretAccessKey,
+  },
+  region: bucketRegion
+})
+
 function generateToken(user) {
   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' })
 }
@@ -18,8 +34,27 @@ const randomImageName = (bytes = 32) => {
   return `${randomHex}.jpg`
 }
 
+async function uploadBase64ToS3(imageName, base64Image) {
+  // Remove the "data:image/jpeg;base64," part if it exists
+  const base64Data = base64Image.replace(/^data:image\/jpeg;base64,/, "");
+
+  // Convert base64 to buffer
+  const buffer = Buffer.from(base64Data, 'base64');
+
+  const params = {
+    Bucket: bucketName,
+    Key: imageName,
+    Body: buffer,
+    ContentType: 'image/jpeg'
+  };
+
+  const command = new PutObjectCommand(params);
+  await s3.send(command);
+}
+
 module.exports = {
   "generateRefreshToken": generateRefreshToken,
   "generateToken": generateToken,
   "randomImageName": randomImageName,
+  "uploadBase64ToS3": uploadBase64ToS3,
 }
