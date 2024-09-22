@@ -135,18 +135,19 @@ router.get("/search", async (req, res) => {
 
 
 router.post("/updateProfile", async (req, res) => {
+	console.log("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
   try {
+	  console.log("updating Profile")
     const { username, displayUsername, pfpImage, backgroundImage } = req.body;
+	  console.log(username, diplayUsername, pfpImage, backgroundImage)
 
     // Check if user exists
     const existingUser = await user.findOne({ username });
     if (!existingUser) {
       return res.status(404).send({ message: "User not found" });
     }
+	  console.log(existingUser)
 
-    // Update display username
-
-    // Handle profile picture
     if (displayName) {
       existingUser.displayName = displayName
     }
@@ -170,7 +171,7 @@ router.post("/updateProfile", async (req, res) => {
 
     return res.status(200).send({ message: "Profile updated successfully" });
   } catch (error) {
-    console.error(error);
+	  console.log(error)
     res.status(400).send({ message: error.message });
   }
 });
