@@ -45,13 +45,13 @@ router.get('/', async (req, res) => {
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
+    if (userData.backgroundName != "Default") {
+      const url = await helperFunctions.getImageUrlS3(userData.backgroundName)
+      userData.backgroundUrl = url
+    }
+
     if (userData.pictureName != "Default") {
-      const getObjectParams = {
-        Bucket: bucketName,
-        Key: userData.pictureName
-      }
-      const command = new GetObjectCommand(getObjectParams);
-      const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+      const url = await helperFunctions.getImageUrlS3(userData.pictureName)
       userData.pictureUrl = url
     }
 
