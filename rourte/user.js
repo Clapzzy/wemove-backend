@@ -131,11 +131,10 @@ router.get("/search", async (req, res) => {
 
 
 router.post("/updateProfile", async (req, res) => {
-  console.log("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
   try {
     console.log("updating Profile")
     const { username, displayUsername, pfpImage, backgroundImage } = req.body;
-    console.log(username, diplayUsername, pfpImage, backgroundImage)
+    console.log(username, displayUsername, pfpImage, backgroundImage)
 
     // Check if user exists
     const existingUser = await user.findOne({ username });
