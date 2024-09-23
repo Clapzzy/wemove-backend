@@ -173,7 +173,7 @@ router.post("/updateProfile", async (req, res) => {
 
 
 router.post('/login', async (req, res) => {
-  let foundUser = await user.findOne({ email: req.body.email })
+  let foundUser = await user.findOne({ email: req.body.email.toLowerCase() })
   if (foundUser === null) {
     return res.status(400).send({
       message: "User not found."
@@ -183,6 +183,7 @@ router.post('/login', async (req, res) => {
     if (foundUser.validatePassword(req.body.password)) {
       return res.status(201).send({
         message: "loggedin",
+        username: foundUser.username
       })
     }
     else {
@@ -205,7 +206,7 @@ router.post('/signup', upload.single("image"), async (req, res) => {
     let newUser = new user();
 
     newUser.username = req.body.username
-    newUser.email = req.body.email
+    newUser.email = req.body.email.toLowerCase()
     newUser.displayName = req.body.displayName
     newUser.birthday = req.body.birthday
 
