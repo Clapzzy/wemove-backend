@@ -134,7 +134,7 @@ router.post("/updateProfile", async (req, res) => {
   try {
     console.log("updating Profile")
     const { username, displayName, pfpImage, backgroundImage } = req.body;
-    console.log(username, displayName, pfpImage, backgroundImage)
+    console.log(displayName)
 
     // Check if user exists
     const existingUser = await user.findOne({ username });
