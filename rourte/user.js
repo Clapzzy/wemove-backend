@@ -182,7 +182,7 @@ router.post('/login', async (req, res) => {
   else {
     if (foundUser.validatePassword(req.body.password)) {
       return res.status(201).send({
-        message: "User found.",
+        message: "loggedin",
       })
     }
     else {
