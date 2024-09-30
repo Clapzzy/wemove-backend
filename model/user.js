@@ -77,6 +77,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  UserRank: {
+    type: Number,
+  },
   hash: {
     type: String,
   },
