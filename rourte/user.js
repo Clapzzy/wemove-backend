@@ -52,6 +52,32 @@ router.get('/', async (req, res) => {
       userData.pictureUrl = url
     }
 
+    //mnogo losho za performance(trqbva da se indeksira i da ima field v kojto pishe kolko predizvikatelstva sa napraveni za da ne kalkulira vseki put )
+
+    const sortedUsers = await user.aggregate([
+      {
+        $addFields: {
+          challengesCount: { $size: "$doneChallenges" }
+        }
+      },
+      {
+        $sort: { challengesCount: -1 }
+      },
+      {
+        $project: {
+          challengesCount: 0  // Remove the temporary field
+        }
+      }
+    ]).exec();
+    //tova e malumno &^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    console.log(sortedUsers)
+
+    const userIndex = sortedUsers.findIndex(user => user.username === username);
+    if (userIndex !== -1) {
+      userData.UserRank = userIndex + 1
+    }
+
     return res.status(200).send(userData)
 
   } catch (error) {
