@@ -49,7 +49,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       await userFound.save()
       console.log("streak lost")
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
-      user.dailyStreak++
+      userFound.dailyStreak++
       await userFound.save()
     }
 
