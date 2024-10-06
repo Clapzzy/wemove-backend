@@ -51,7 +51,7 @@ async function uploadBase64ToS3(base64Image) {
   const imageName = randomImageName(64)
 
   // Convert base64 to buffer
-  const buffer = Buffer.from(base64Data, 'base64');
+  const buffer = Buffer.from(base64Image, 'base64');
 
   const params = {
     Bucket: bucketName,
