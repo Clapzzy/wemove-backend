@@ -40,17 +40,22 @@ router.post("/add", upload.single("image"), async (req, res) => {
 
     const userFound = await user.findOne({ username: username })
 
-
-    const params = {
-      Bucket: bucketName,
-      Key: imageName,
-      Body: buffer,
-      ContentType: 'image/jpeg'
+    //dobavi lastSreakCheck za da spestqvash vsicko tova
+    const lastChallDateCompleted = new Date(userFound.doneChallenges[userFound.doneChallenges.length - 1].datePosted * 1000)
+    lastChallDateCompleted.setHours(0, 0, 0, 0)
+    const streakExpireDate = new Date(lastChallDateCompleted)
+    streakExpireDate.setDate(streakExpireDate.getDate() + 2)
+    if (new Date().getTime() > streakExpireDate.getTime()) {
+      userFound.dailyStreak = 0
+      await userFound.save()
+      console.log("streak lost")
+    } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
+      user.dailyStreak++
+      await userFound.save()
     }
 
-    const command = new PutObjectCommand(params)
+    await helperFunctions.uploadBase64ToS3(buffer)
 
-    await s3.send(command)
     const post = new posts()
 
     post.text = req.body.description
@@ -82,6 +87,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       }
     );
     const result2 = await user.updateOne({ username: username }, { $push: { doneChallenges: post } })
+    //trqbva da da vikna user datata ot mongo samo vednuz, a ne 3 puti
     await post.save()
     return res.status(201).send({ message: "post was succsesfully created" })
 

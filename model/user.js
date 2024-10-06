@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: false
   },
+  dailyStreak: {
+    type: Number,
+    default: 0
+  },
   pictureName: {
     type: String,
     default: "Default"

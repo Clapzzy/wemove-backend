@@ -42,6 +42,19 @@ router.get('/', async (req, res) => {
     if (userData == null) {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
+
+    //dobavi lastSreakCheck za da spestqvash vsicko tova
+    const lastChallDateCompleted = new Date(userData.doneChallenges[userData.doneChallenges.length - 1].datePosted * 1000)
+    lastChallDateCompleted.setHours(0, 0, 0, 0)
+    const streakExpireDate = new Date(lastChallDateCompleted)
+    streakExpireDate.setDate(streakExpireDate.getDate() + 2)
+    if (new Date().getTime() > streakExpireDate.getTime()) {
+      userData.dailyStreak = 0
+      await userData.save()
+      console.log("streak lost")
+    }
+    console.log(new Date().getDate(), streakExpireDate.getDate())
+
     if (userData.backgroundName != "Default") {
       const url = await helperFunctions.getImageUrlS3(userData.backgroundName)
       userData.backgroundUrl = url
@@ -51,8 +64,6 @@ router.get('/', async (req, res) => {
       const url = await helperFunctions.getImageUrlS3(userData.pictureName)
       userData.pictureUrl = url
     }
-
-    //mnogo losho za performance(trqbva da se indeksira i da ima field v kojto pishe kolko predizvikatelstva sa napraveni za da ne kalkulira vseki put )
 
     const sortedUsers = await user.aggregate([
       {
@@ -65,13 +76,13 @@ router.get('/', async (req, res) => {
       },
       {
         $project: {
-          challengesCount: 0  // Remove the temporary field
+          challengesCount: 0  // Maha challengesCount
         }
       }
     ]).exec();
     //tova e malumno &^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    //mnogo losho za performance(trqbva da se indeksira i da ima field v kojto pishe kolko predizvikatelstva sa napraveni za da ne kalkulira vseki put )
 
-    console.log(sortedUsers)
 
     const userIndex = sortedUsers.findIndex(user => user.username === username);
     if (userIndex !== -1) {
@@ -172,15 +183,13 @@ router.post("/updateProfile", async (req, res) => {
     }
 
     if (pfpImage) {
-      const pfpName = helperFunctions.randomImageName(64);
-      await helperFunctions.uploadBase64ToS3(pfpName, pfpImage);
+      await helperFunctions.uploadBase64ToS3(pfpImage);
       existingUser.pictureName = pfpName;
     }
 
     // Handle background picture
     if (backgroundImage) {
-      const bgName = helperFunctions.randomImageName(64);
-      await helperFunctions.uploadBase64ToS3(bgName, backgroundImage);
+      await helperFunctions.uploadBase64ToS3(backgroundImage);
       existingUser.backgroundName = bgName;
     }
 
