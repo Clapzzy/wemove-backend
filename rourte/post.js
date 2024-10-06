@@ -53,7 +53,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       await userFound.save()
     }
 
-    await helperFunctions.uploadBase64ToS3(req.body.image)
+    await helperFunctions.uploadBase64ToS3(imageName, req.body.image)
 
     const post = new posts()
 

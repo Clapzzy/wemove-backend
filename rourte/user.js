@@ -183,13 +183,15 @@ router.post("/updateProfile", async (req, res) => {
     }
 
     if (pfpImage) {
-      await helperFunctions.uploadBase64ToS3(pfpImage);
+      const imageName = helperFunctions.randomImageName(64)
+      await helperFunctions.uploadBase64ToS3(imageName, pfpImage);
       existingUser.pictureName = pfpName;
     }
 
     // Handle background picture
     if (backgroundImage) {
-      await helperFunctions.uploadBase64ToS3(backgroundImage);
+      const imageName = helperFunctions.randomImageName(64)
+      await helperFunctions.uploadBase64ToS3(imageName, backgroundImage);
       existingUser.backgroundName = bgName;
     }
 
