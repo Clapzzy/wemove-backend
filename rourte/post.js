@@ -35,7 +35,6 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const challengeDesc = req.body.challengeDesc
     const username = req.body.username
     const imageName = helperFunctions.randomImageName(64)
-    const buffer = Buffer.from(req.body.image, "base64")
     const datePosted = Math.floor(new Date().getTime() / 1000)
 
     const userFound = await user.findOne({ username: username })
@@ -54,7 +53,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       await userFound.save()
     }
 
-    await helperFunctions.uploadBase64ToS3(buffer)
+    await helperFunctions.uploadBase64ToS3(req.body.image)
 
     const post = new posts()
 
