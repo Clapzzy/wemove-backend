@@ -49,7 +49,6 @@ async function getImageUrlS3(imageName) {
 async function uploadBase64ToS3(base64Image) {
   // Remove the "data:image/jpeg;base64," part if it exists
   const imageName = randomImageName(64)
-  const base64Data = base64Image.replace(/^data:image\/jpeg;base64,/, "");
 
   // Convert base64 to buffer
   const buffer = Buffer.from(base64Data, 'base64');
