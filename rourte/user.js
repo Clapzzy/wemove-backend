@@ -43,6 +43,7 @@ router.get('/', async (req, res) => {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
 
+    console.log(userData.dailyStreak)
     //dobavi lastSreakCheck za da spestqvash vsicko tova
     const lastChallDateCompleted = new Date(userData.doneChallenges[userData.doneChallenges.length - 1].datePosted * 1000)
     lastChallDateCompleted.setHours(0, 0, 0, 0)

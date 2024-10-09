@@ -51,9 +51,13 @@ router.post("/add", upload.single("image"), async (req, res) => {
       console.log("streak lost")
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
       console.log("streak is up")
+
       userFound.dailyStreak == userFound.dailyStreak + 1
       await userFound.save()
+    } else {
+      console.log("ignore")
     }
+    //moze da ima probllem is vremevite zoni **&*^&^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     await helperFunctions.uploadBase64ToS3(imageName, req.body.image)
 
