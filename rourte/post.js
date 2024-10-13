@@ -45,16 +45,18 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const streakExpireDate = new Date(lastChallDateCompleted)
     streakExpireDate.setDate(streakExpireDate.getDate() + 2)
     if (new Date().getTime() > streakExpireDate.getTime()) {
+      console.log("post1")
       console.log("deleted streak")
-      userFound.dailyStreak = 0
+      userFound.dailyStreak = 1
       await userFound.save()
-      console.log("streak lost")
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
+      console.log("post1")
       console.log("streak is up")
 
       userFound.dailyStreak == userFound.dailyStreak + 1
       await userFound.save()
     } else {
+      console.log("post1")
       console.log("ignore")
     }
     //moze da ima probllem is vremevite zoni **&*^&^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

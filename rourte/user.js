@@ -52,6 +52,7 @@ router.get('/', async (req, res) => {
     if (new Date().getTime() > streakExpireDate.getTime()) {
       userData.dailyStreak = 0
       await userData.save()
+      console.log("user")
       console.log("streak lost")
     }
     console.log(new Date().getDate(), streakExpireDate.getDate())
