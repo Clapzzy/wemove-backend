@@ -50,12 +50,14 @@ router.get('/', async (req, res) => {
     const streakExpireDate = new Date(lastChallDateCompleted)
     streakExpireDate.setDate(streakExpireDate.getDate() + 2)
     if (new Date().getTime() > streakExpireDate.getTime()) {
+      console.log(new Date().getDate(), streakExpireDate.getDate())
       userData.dailyStreak = 0
       await userData.save()
       console.log("user")
       console.log("streak lost")
+    } else {
+      console.log("didnt lose streak")
     }
-    console.log(new Date().getDate(), streakExpireDate.getDate())
 
     if (userData.backgroundName != "Default") {
       const url = await helperFunctions.getImageUrlS3(userData.backgroundName)
