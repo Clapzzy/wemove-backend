@@ -52,6 +52,8 @@ router.post("/add", upload.single("image"), async (req, res) => {
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
       console.log("post1")
       console.log("streak is up")
+      console.log("current streak", userFound.dailyStreak)
+      console.log(userFound.dailyStreak + 1)
 
       userFound.dailyStreak == userFound.dailyStreak + 1
       await userFound.save()
