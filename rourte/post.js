@@ -55,7 +55,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       console.log("current streak", userFound.dailyStreak)
       console.log(userFound.dailyStreak + 1)
 
-      userFound.dailyStreak == userFound.dailyStreak + 1
+      userFound.dailyStreak = userFound.dailyStreak + 1
       await userFound.save()
     } else {
       console.log("post1")
