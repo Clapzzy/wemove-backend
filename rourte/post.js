@@ -105,8 +105,17 @@ router.post("/add", upload.single("image"), async (req, res) => {
     res.status(400).send({ message: error })
   }
 })
-router.get("/comments", async (req,res) => {
+router.get("/comments", async (req, res) => {
+  try {
+    const username = req.body.username
+    const postId = req.body._id
 
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({ message: error })
+  }
+}
 )
 router.post("/comments", async (req, res) => {
   try {
