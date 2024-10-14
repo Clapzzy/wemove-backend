@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const helperFunctions = require("../helperFunctions")
-const posts = require("../model/posts");
+const { posts, comment } = require("../model/posts");
 const { user, userChallenge } = require('../model/user')
 
 const mongoose = require('mongoose');
@@ -99,6 +99,36 @@ router.post("/add", upload.single("image"), async (req, res) => {
     //trqbva da da vikna user datata ot mongo samo vednuz, a ne 3 puti
     await post.save()
     return res.status(201).send({ message: "post was succsesfully created" })
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({ message: error })
+  }
+})
+
+router.post("/comments", async (req, res) => {
+  try {
+    const username = req.body.username
+    const postId = req.body._id
+    const posterUsername = req.body.posterUsername
+    const postMessage = req.body.postMessage
+
+    const newComment = new comment()
+
+    newComment.message = req.body.postMessage
+    newComment.user = req.body.posterUsername
+    newComment.datePosted = new Date().getTime() / 1000
+
+    const userFound = await user.findOneAndUpdate(
+      {
+        username: req.body.username,
+        "doneChallenges._id": req.body._id
+      },
+      {
+        $push: { 'doneChallenges.$.comments': newComment }
+      },
+      { new: true }
+    )
 
   } catch (error) {
     console.log(error)
