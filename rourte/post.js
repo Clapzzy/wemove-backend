@@ -8,7 +8,6 @@ const { user, userChallenge } = require('../model/user')
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URL)
 require("dotenv").config();
-
 const multer = require('multer')
 const { S3Client, PutObjectCommand, GetObjectCommand, GetObjectLockConfigurationCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -105,11 +104,30 @@ router.post("/add", upload.single("image"), async (req, res) => {
     res.status(400).send({ message: error })
   }
 })
-router.get("/comments", async (req, res) => {
+router.get("/single", async (req, res) => {
   try {
     const username = req.body.username
     const postId = req.body._id
 
+    let postFound
+
+    const userFound = await user.findOne({
+      username: username
+    })
+
+    // ne znam kak do otkriq post-a samo s mongoose
+    for (let i = 0; i < userFound.doneChallenges.length; i++) {
+      if (userFound.doneChallenges[i]._id == postId) {
+        postFound = userFound.doneChallenges[i]
+        break
+      }
+    }
+
+    if (!postFound) {
+      return res.status(400).send({ message: "Post or User not found" })
+    }
+
+    return res.status(200).send(postFound)
 
   } catch (error) {
     console.log(error)
@@ -117,12 +135,11 @@ router.get("/comments", async (req, res) => {
   }
 }
 )
+
 router.post("/comments", async (req, res) => {
   try {
-    const username = req.body.username
-    const postId = req.body._id
-    const posterUsername = req.body.posterUsername
-    const postMessage = req.body.postMessage
+    //nqma da e zle da proverqva dali posterUsername sushtestvuva
+    let commentAdded = false
 
     const newComment = new comment()
 
@@ -130,17 +147,29 @@ router.post("/comments", async (req, res) => {
     newComment.user = req.body.posterUsername
     newComment.datePosted = new Date().getTime() / 1000
 
-    const userFound = await user.findOneAndUpdate(
+    const userFound = await user.findOne(
       {
         username: req.body.username,
-        "doneChallenges._id": req.body._id
-      },
-      {
-        $push: { 'doneChallenges.$.comments': newComment }
-      },
-      { new: true }
+      }
     )
 
+    //maj e zle. ne uspqh da go napravq samo s mongo findOneAndUpdate
+    for (let i = 0; i < userFound.doneChallenges.length; i++) {
+      if (userFound.doneChallenges[i]._id == req.body._id) {
+        userFound.doneChallenges[i].comments.push(newComment)
+        commentAdded = true
+        userFound.markModified("doneChallenges")
+        await userFound.save()
+        break
+      }
+    }
+
+    if (commentAdded === false) {
+      return res.status(400).send({ message: "The post cant be found" })
+    }
+
+
+    return res.status(200).send(userFound)
   } catch (error) {
     console.log(error)
     res.status(400).send({ message: error })
