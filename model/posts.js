@@ -11,7 +11,12 @@ const comment = new mongoose.Schema({
   },
   datePosted: {
     type: Date
-  }
+  },
+  likes: {
+    type: Number,
+    default: 0
+  },
+  likedBy: [String]
 })
 
 const postSchema = new mongoose.Schema({

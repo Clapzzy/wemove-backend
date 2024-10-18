@@ -136,9 +136,101 @@ router.get("/single", async (req, res) => {
 }
 )
 
+router.post("/likePost", async (req, res) => {
+  try {
+    const username = req.body.username
+    const postId = req.body.postId
+    const posterUsername = req.body.posterUsername
+    let postFound
+
+    const userFound = await user.findOne({
+      username: req.body.posterUsername
+    })
+
+    for (let i = 0; i < userFound.doneChallenges.length; i++) {
+      if (userFound.doneChallenges[i]._id == req.body.postId) {
+        if (userFound.doneChallenges[i].likedBy.includes(req.body.username)) {
+          userFound.doneChallenges[i].likes--
+          userFound.doneChallenges[i].likedBy.pop(req.body.username)
+
+          userFound.markModified("doneChallenges")
+          await userFound.save()
+          postFound = true
+          break
+
+        } else {
+          userFound.doneChallenges[i].likes++
+          userFound.doneChallenges[i].likedBy.push(req.body.username)
+
+          userFound.markModified("doneChallenges")
+          await userFound.save()
+          postFound = true
+          break
+        }
+      }
+    }
+    if (!postFound) {
+      return res.status(400).send({ message: "Post to like not found" })
+    }
+    console.log(userFound)
+    return res.status(200).send(userFound)
+
+  } catch (error) {
+    console.log(error)
+    res.status(400).send({ message: error })
+  }
+})
+
+router.post("/likeComment", async (req, res) => {
+  //malumno e da izpolzvam username vmesto id. Nqkoj den trqbva da go opravq
+  //nqma da e zle da moga da otkrivam post-a samo s _id-to 
+  let commentFound
+
+  const userFound = await user.findOne({
+    username: req.body.posterUsername
+  })
+
+  for (let i = 0; i < userFound.doneChallenges.length; i++) {
+    if (userFound.doneChallenges[i]._id == req.body.postId) {
+      console.log(userFound.doneChallenges[i])
+      for (let j = 0; j < userFound.doneChallenges[i].comments.length; j++) {
+        if (userFound.doneChallenges[i].comments[j]._id == req.body.commentId) {
+          //proverqva dali user-a go e laiknal i ako e maha like-a, inache go dobavq
+          if (userFound.doneChallenges[i].comments[j].likedBy.includes(req.body.username)) {
+            userFound.doneChallenges[i].comments[j].likes--
+            userFound.doneChallenges[i].comments[j].likedBy.pop(req.body.username)
+
+            userFound.markModified("doneChallenges")
+            await userFound.save()
+            commentFound = true
+            break
+
+          } else {
+            userFound.doneChallenges[i].comments[j].likes++
+            userFound.doneChallenges[i].comments[j].likedBy.push(req.body.username)
+
+            userFound.markModified("doneChallenges")
+            await userFound.save()
+            commentFound = true
+            break
+          }
+        }
+      }
+      if (!commentFound) {
+        return res.status(400).send({ message: "Comment to like not found" })
+      }
+      break
+    }
+  }
+  console.log(userFound)
+  return res.status(200).send(userFound)
+
+})
+
 router.post("/comments", async (req, res) => {
   try {
     //nqma da e zle da proverqva dali posterUsername sushtestvuva
+    //trqbva da napravq limit za dulzina na message i za post message kogato postvash
     let commentAdded = false
 
     const newComment = new comment()
