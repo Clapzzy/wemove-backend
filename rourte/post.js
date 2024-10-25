@@ -106,6 +106,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
 })
 router.get("/single", async (req, res) => {
   try {
+    //sigurno nqma da e zle ako davam comentarite kakto postovete i profilite, no za sega ne e problem, kato e samo tekst.
     const username = req.body.username
     const postId = req.body._id
 
