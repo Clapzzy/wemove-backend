@@ -108,7 +108,6 @@ router.get("/single", async (req, res) => {
   try {
     //sigurno nqma da e zle ako davam comentarite kakto postovete i profilite, no za sega ne e problem, kato e samo tekst.
 
-    console.log(req.body.username)
     const username = req.query.username
     const postId = req.query._id
 
@@ -119,8 +118,6 @@ router.get("/single", async (req, res) => {
     })
 
     // ne znam kak do otkriq post-a samo s mongoose
-    console.log(username)
-    console.log(userFound)
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == postId) {
         postFound = userFound.doneChallenges[i]
@@ -128,6 +125,7 @@ router.get("/single", async (req, res) => {
       }
     }
 
+    console.log(postFound)
     if (!postFound) {
       return res.status(400).send({ message: "Post or User not found" })
     }
