@@ -116,7 +116,6 @@ router.get("/single", async (req, res) => {
     const userFound = await user.findOne({
       username: username
     })
-    console.log(userFound.doneChallenges)
 
     // ne znam kak do otkriq post-a samo s mongoose
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
