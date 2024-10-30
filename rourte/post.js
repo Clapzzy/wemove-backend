@@ -117,6 +117,7 @@ router.get("/single", async (req, res) => {
     })
 
     // ne znam kak do otkriq post-a samo s mongoose
+    console.log(userFound)
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == postId) {
         postFound = userFound.doneChallenges[i]
