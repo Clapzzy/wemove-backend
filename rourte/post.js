@@ -107,8 +107,10 @@ router.post("/add", upload.single("image"), async (req, res) => {
 router.get("/single", async (req, res) => {
   try {
     //sigurno nqma da e zle ako davam comentarite kakto postovete i profilite, no za sega ne e problem, kato e samo tekst.
-    const username = req.body.username
-    const postId = req.body._id
+
+    console.log(req.body.username)
+    const username = req.query.username
+    const postId = req.query._id
 
     let postFound
 
@@ -117,6 +119,7 @@ router.get("/single", async (req, res) => {
     })
 
     // ne znam kak do otkriq post-a samo s mongoose
+    console.log(username)
     console.log(userFound)
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == postId) {
