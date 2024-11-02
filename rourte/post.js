@@ -132,6 +132,7 @@ router.get("/single", async (req, res) => {
     //also not a great idea to have to populate the comments with pfps every time someone wants to see them
     //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
     console.log("amount of comments", postFound.comments.length)
+    console.log(postFound.comments)
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i + i) {
         console.log(postFound.comments[i].username)
