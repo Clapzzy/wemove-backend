@@ -119,8 +119,6 @@ router.get("/single", async (req, res) => {
 
     // ne znam kak do otkriq post-a samo s mongoose
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
-      console.log(userFound.doneChallenges[i]._id)
-      console.log(postId)
       if (userFound.doneChallenges[i]._id == postId) {
         postFound = userFound.doneChallenges[i]
         break
@@ -131,18 +129,20 @@ router.get("/single", async (req, res) => {
       return res.status(400).send({ message: "Post or User not found" })
     }
 
-    //maybe check if comments are empty
     //also not a great idea to have to populate the comments with pfps every time someone wants to see them
     //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
-    for (let i = 0; i < postFound.comments.length; i + i) {
-      console.log(postFound.comments[i].username)
-      const populatedUser = await user.findOne({ username: postFound.comments[i].username })
-      postFound[i].displayName = populatedUser.displayName
-      if (populatedUser.pictureName != "Default") {
-        const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
-        postFound[i].userPfp = url
-      }
+    console.log("amount of comments", postFound.comments.length)
+    if (postFound.comments.length >= 0) {
+      for (let i = 0; i < postFound.comments.length; i + i) {
+        console.log(postFound.comments[i].username)
+        const populatedUser = await user.findOne({ username: postFound.comments[i].username })
+        postFound[i].displayName = populatedUser.displayName
+        if (populatedUser.pictureName != "Default") {
+          const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
+          postFound[i].userPfp = url
+        }
 
+      }
     }
 
     return res.status(200).send(postFound)
