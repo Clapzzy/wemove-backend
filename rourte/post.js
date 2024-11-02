@@ -127,9 +127,22 @@ router.get("/single", async (req, res) => {
       }
     }
 
-    console.log(postFound)
     if (!postFound) {
       return res.status(400).send({ message: "Post or User not found" })
+    }
+
+    //maybe check if comments are empty
+    //also not a great idea to have to populate the comments with pfps every time someone wants to see them
+    //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
+    for (let i = 0; i < postFound.comments.length; i + i) {
+      console.log(postFound.comments[i].username)
+      const populatedUser = await user.findOne({ username: postFound.comments[i].username })
+      postFound[i].displayName = populatedUser.displayName
+      if (populatedUser.pictureName != "Default") {
+        const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
+        postFound[i].userPfp = url
+      }
+
     }
 
     return res.status(200).send(postFound)
@@ -328,21 +341,11 @@ router.get('/', async (req, res) => {
         postsFound[post]['username'] = userFound.username
 
         if (userFound.pictureName != 'Default') {
-          const getObjectParams = {
-            Bucket: bucketName,
-            Key: userFound.pictureName
-          }
-          const command = new GetObjectCommand(getObjectParams)
-          const url = await getSignedUrl(s3, command, { expiresIn: 3600 })
+          const url = await helperFunctions.getImageUrlS3(userFound.pictureName)
           postsFound[post]['userPfp'] = url
         }
         if (postsFound[post].attachmentName != '' || postsFound[post].attachmentName != null) {
-          const getObjectParams = {
-            Bucket: bucketName,
-            Key: postsFound[post]["attachmentName"]
-          }
-          const command = new GetObjectCommand(getObjectParams);
-          const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+          const url = await helperFunctions.getImageUrlS3(postsFound[post]["attachmentName"])
           postsFound[post]["attachmentUrl"] = url
         }
       }

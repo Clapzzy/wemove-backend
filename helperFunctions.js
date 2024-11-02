@@ -35,6 +35,7 @@ const randomImageName = (bytes = 32) => {
 }
 
 async function getImageUrlS3(imageName) {
+  //make this check if the imagename is default 
   const getObjectParams = {
     Bucket: bucketName,
     Key: imageName

@@ -5,6 +5,14 @@ const comment = new mongoose.Schema({
     type: String,
     require: true
   },
+  userPfp: {
+    type: String,
+    default: ""
+  },
+  displayName: {
+    type: String,
+    default: ""
+  },
   message: {
     type: String,
     required: true,
