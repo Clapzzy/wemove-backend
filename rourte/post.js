@@ -141,7 +141,7 @@ router.get("/single", async (req, res) => {
         postFound.comments[i].displayName = populatedUser.displayName
         if (populatedUser.pictureName != "Default") {
           const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
-          postFound[i].userPfp = url
+          postFound.comments[i].userPfp = url
         }
 
       }
