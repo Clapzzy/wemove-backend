@@ -138,8 +138,7 @@ router.get("/single", async (req, res) => {
         console.log(postFound.comments[i].user)
         console.log("single comment", postFound.comments[i])
         const populatedUser = await user.findOne({ username: postFound.comments[i].user })
-        console.log(populatedUser)
-        postFound[i].displayName = populatedUser.displayName
+        postFound.comments[i].displayName = populatedUser.displayName
         if (populatedUser.pictureName != "Default") {
           const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
           postFound[i].userPfp = url
