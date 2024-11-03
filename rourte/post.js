@@ -135,6 +135,7 @@ router.get("/single", async (req, res) => {
     console.log(postFound.comments)
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i + i) {
+        console.log(postFound.comments[0])
         console.log(postFound.comments[i].username)
         console.log("single comment", postFound[i])
         const populatedUser = await user.findOne({ username: postFound.comments[i].username })
