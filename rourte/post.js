@@ -44,21 +44,14 @@ router.post("/add", upload.single("image"), async (req, res) => {
     const streakExpireDate = new Date(lastChallDateCompleted)
     streakExpireDate.setDate(streakExpireDate.getDate() + 2)
     if (new Date().getTime() > streakExpireDate.getTime()) {
-      console.log("post1")
-      console.log("deleted streak")
       userFound.dailyStreak = 1
       await userFound.save()
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
-      console.log("post1")
-      console.log("streak is up")
-      console.log("current streak", userFound.dailyStreak)
       console.log(userFound.dailyStreak + 1)
 
       userFound.dailyStreak = userFound.dailyStreak + 1
       await userFound.save()
     } else {
-      console.log("post1")
-      console.log("ignore")
     }
     //moze da ima probllem is vremevite zoni **&*^&^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -133,7 +126,6 @@ router.get("/single", async (req, res) => {
     //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i++) {
-        console.log("single comment", postFound.comments[i])
         const populatedUser = await user.findOne({ username: postFound.comments[i].user })
         postFound.comments[i].displayName = populatedUser.displayName
         if (populatedUser.pictureName != "Default") {
@@ -275,6 +267,13 @@ router.post("/comments", async (req, res) => {
 
     if (commentAdded === false) {
       return res.status(400).send({ message: "The post cant be found" })
+    }
+
+    const populatedUser = await user.findOne({ username: commentAdded.username })
+    commentAdded.displayName = populatedUser.displayName
+    if (populatedUser.pictureName != "Default") {
+      const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
+      commentAdded.userPfp = url
     }
 
 
