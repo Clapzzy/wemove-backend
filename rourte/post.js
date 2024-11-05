@@ -246,6 +246,8 @@ router.post("/comments", async (req, res) => {
     newComment.message = req.body.postMessage
     newComment.user = req.body.posterUsername
     newComment.datePosted = new Date().getTime() / 1000
+    newComment.displayName = ""
+    newComment.userPfp = ""
 
     const userFound = await user.findOne(
       {
@@ -274,6 +276,7 @@ router.post("/comments", async (req, res) => {
       const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
       newComment.userPfp = url
     }
+    console.log(commentAdded)
 
 
     return res.status(200).send(newComment)
