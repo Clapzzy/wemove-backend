@@ -241,7 +241,7 @@ router.post("/comments", async (req, res) => {
     //trqbva da napravq limit za dulzina na message i za post message kogato postvash
     let commentAdded = false
 
-    const newComment = new comment()
+    let newComment = new comment()
 
     newComment.message = req.body.postMessage
     newComment.user = req.body.posterUsername
