@@ -271,7 +271,8 @@ router.post("/comments", async (req, res) => {
     }
 
     const populatedUser = await user.findOne({ username: commentAdded.username })
-    console.log(newComment)
+    console.log(newComment.userPfp)
+    console.log(newComment.displayName)
     newComment.displayName = populatedUser.displayName
     if (populatedUser.pictureName != "Default") {
       const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
