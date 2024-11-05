@@ -244,7 +244,7 @@ router.post("/comments", async (req, res) => {
     let newComment = new comment()
 
     newComment.message = req.body.postMessage
-    newComment.user = req.body.posterUsername
+    newComment.username = req.body.posterUsername
     newComment.datePosted = new Date().getTime() / 1000
     newComment.displayName = ""
     newComment.userPfp = ""
