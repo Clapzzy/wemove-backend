@@ -131,11 +131,8 @@ router.get("/single", async (req, res) => {
 
     //also not a great idea to have to populate the comments with pfps every time someone wants to see them
     //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
-    console.log("amount of comments", postFound.comments.length)
-    console.log(postFound.comments)
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i++) {
-        console.log(postFound.comments[i].user)
         console.log("single comment", postFound.comments[i])
         const populatedUser = await user.findOne({ username: postFound.comments[i].user })
         postFound.comments[i].displayName = populatedUser.displayName
@@ -242,7 +239,6 @@ router.post("/likeComment", async (req, res) => {
       break
     }
   }
-  console.log(userFound)
   return res.status(200).send(userFound)
 
 })
@@ -281,7 +277,7 @@ router.post("/comments", async (req, res) => {
     }
 
 
-    return res.status(200).send(userFound)
+    return res.status(200).send(newComment)
   } catch (error) {
     console.log(error)
     res.status(400).send({ message: error })
