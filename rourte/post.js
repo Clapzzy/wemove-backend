@@ -254,7 +254,6 @@ router.post("/comments", async (req, res) => {
     )
 
     //maj e zle. ne uspqh da go napravq samo s mongo findOneAndUpdate
-    console.log(userFound)
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == req.body._id) {
         userFound.doneChallenges[i].comments.push(newComment)
@@ -270,10 +269,10 @@ router.post("/comments", async (req, res) => {
     }
 
     const populatedUser = await user.findOne({ username: commentAdded.username })
-    commentAdded.displayName = populatedUser.displayName
+    newComment.displayName = populatedUser.displayName
     if (populatedUser.pictureName != "Default") {
       const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
-      commentAdded.userPfp = url
+      newComment.userPfp = url
     }
 
 

@@ -43,7 +43,6 @@ router.get('/', async (req, res) => {
       return res.status(400).send({ message: `0 found users with username : ${username}` })
     }
 
-    console.log(userData.dailyStreak)
     //dobavi lastSreakCheck za da spestqvash vsicko tova
     const lastChallDateCompleted = new Date(userData.doneChallenges[userData.doneChallenges.length - 1].datePosted * 1000)
     lastChallDateCompleted.setHours(0, 0, 0, 0)
@@ -53,10 +52,7 @@ router.get('/', async (req, res) => {
       console.log(new Date().getDate(), streakExpireDate.getDate())
       userData.dailyStreak = 0
       await userData.save()
-      console.log("user")
-      console.log("streak lost")
     } else {
-      console.log("didnt lose streak")
     }
 
     if (userData.backgroundName != "Default") {
