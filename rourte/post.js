@@ -271,6 +271,7 @@ router.post("/comments", async (req, res) => {
     }
 
     const populatedUser = await user.findOne({ username: commentAdded.username })
+    console.log(newComment.userPfp = "something")
     console.log(newComment.userPfp)
     console.log(newComment.displayName)
     newComment.displayName = populatedUser.displayName
