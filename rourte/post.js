@@ -270,11 +270,7 @@ router.post("/comments", async (req, res) => {
       return res.status(400).send({ message: "The post cant be found" })
     }
 
-    const populatedUser = await user.findOne({ username: commentAdded.username })
-    console.log(newComment.userPfp = "something")
-    console.log(populatedUser.displayName)
-    console.log(newComment.userPfp)
-    console.log(newComment.displayName)
+    const populatedUser = await user.findOne({ username: newComment.username })
     newComment.displayName = populatedUser.displayName
     if (populatedUser.pictureName != "Default") {
       const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
