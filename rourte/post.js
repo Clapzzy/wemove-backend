@@ -122,13 +122,9 @@ router.get("/single", async (req, res) => {
       return res.status(400).send({ message: "Post or User not found" })
     }
 
-    //also not a great idea to have to populate the comments with pfps every time someone wants to see them
-    //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i++) {
         const populatedUser = await user.findOne({ username: postFound.comments[i].username })
-        console.log(postFound.comments[i])
-        console.log(postFound.comments[i].displayName, "something 1", populatedUser.displayName, "something 2")
         postFound.comments[i].displayName = populatedUser.displayName
         if (populatedUser.pictureName != "Default") {
           const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
@@ -137,6 +133,8 @@ router.get("/single", async (req, res) => {
 
       }
     }
+
+    postFound.comments.reverse();
 
     return res.status(200).send(postFound)
 
@@ -273,8 +271,6 @@ router.post("/comments", async (req, res) => {
     }
 
     const populatedUser = await user.findOne({ username: newComment.username })
-    console.log(populatedUser)
-    console.log(newComment)
     newComment.displayName = populatedUser.displayName
     if (populatedUser.pictureName != "Default") {
       const url = await helperFunctions.getImageUrlS3(populatedUser.pictureName)
