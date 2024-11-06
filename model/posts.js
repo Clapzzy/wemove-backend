@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 
 const comment = new mongoose.Schema({
-  user: {
+  username: {
     type: String,
     require: true
   },

@@ -126,7 +126,7 @@ router.get("/single", async (req, res) => {
     //maybe using sql will solve the issue bc i am not using mongo correctly and just bending it to my needs
     if (postFound.comments.length >= 0) {
       for (let i = 0; i < postFound.comments.length; i++) {
-        const populatedUser = await user.findOne({ username: postFound.comments[i].user })
+        const populatedUser = await user.findOne({ username: postFound.comments[i].username })
         console.log(postFound.comments[i])
         console.log(postFound.comments[i].displayName, "something 1", populatedUser.displayName, "something 2")
         postFound.comments[i].displayName = populatedUser.displayName
