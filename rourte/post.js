@@ -163,7 +163,7 @@ router.post("/likePost", async (req, res) => {
           const postInPostsFound = await posts.findOne({ _id: postId })
           postInPostsFound.likes--
           postInPostsFound.likedBy.pop(req.body.username)
-          console.log(postInPostsFound)
+          await postInPostsFound.save()
 
           userFound.doneChallenges[i].likes--
           userFound.doneChallenges[i].likedBy.pop(req.body.username)
@@ -177,9 +177,9 @@ router.post("/likePost", async (req, res) => {
         } else {
           const postId = userFound.doneChallenges[i]._id
           const postInPostsFound = await posts.findOne({ _id: postId })
-          postInPostsFound.likes--
-          postInPostsFound.likedBy.pop(req.body.username)
-          console.log(postInPostsFound)
+          postInPostsFound.likes++
+          postInPostsFound.likedBy.push(req.body.username)
+          await postInPostsFound.save()
 
           userFound.doneChallenges[i].likes++
           userFound.doneChallenges[i].likedBy.push(req.body.username)
