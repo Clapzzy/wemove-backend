@@ -63,7 +63,7 @@ const postSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  likedBy: [mongoose.SchemaTypes.ObjectId]
+  likedBy: [String]
 
 })
 
