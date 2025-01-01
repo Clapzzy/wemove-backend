@@ -47,7 +47,6 @@ router.post("/add", upload.single("image"), async (req, res) => {
       userFound.dailyStreak = 1
       await userFound.save()
     } else if (new Date().getDate() != lastChallDateCompleted.getDate()) {
-      console.log(userFound.dailyStreak + 1)
 
       userFound.dailyStreak = userFound.dailyStreak + 1
       await userFound.save()
@@ -183,8 +182,6 @@ router.post("/likePost", async (req, res) => {
     if (!postFound) {
       return res.status(400).send({ message: "Post to like not found" })
     }
-    console.log(userFound)
-    console.log("inside /likePst")
     return res.status(200).send(userFound)
 
   } catch (error) {
