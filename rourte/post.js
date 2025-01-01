@@ -349,6 +349,7 @@ router.get('/', async (req, res) => {
           postsFound[post]["attachmentUrl"] = url
         }
       }
+      console.log(postsFound)
       return res.status(200).send(postsFound)
     }
 
@@ -380,7 +381,6 @@ router.get('/', async (req, res) => {
         postsFound[post]["attachmentUrl"] = url
       }
     }
-    console.log(postsFound)
     return res.status(200).send(postsFound)
 
   } catch (error) {
