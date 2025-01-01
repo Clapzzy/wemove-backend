@@ -52,7 +52,7 @@ router.post("/add", upload.single("image"), async (req, res) => {
       await userFound.save()
     } else {
     }
-    //moze da ima probllem is vremevite zoni **&*^&^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    //moze da ima probllem is vremevite zoni ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     await helperFunctions.uploadBase64ToS3(imageName, req.body.image)
 
@@ -158,6 +158,9 @@ router.post("/likePost", async (req, res) => {
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == req.body.postId) {
         if (userFound.doneChallenges[i].likedBy.includes(req.body.username)) {
+          const postId = userFound.doneChallenges[i]._id
+          const postFound = await posts.findOne({ _id: postId })
+          console.log(postFound)
           userFound.doneChallenges[i].likes--
           userFound.doneChallenges[i].likedBy.pop(req.body.username)
 
