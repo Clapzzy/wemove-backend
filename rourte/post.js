@@ -164,6 +164,7 @@ router.post("/likePost", async (req, res) => {
 
           userFound.markModified("doneChallenges")
           await userFound.save()
+          console.log("like removed")
           postFound = true
           break
 
@@ -173,6 +174,7 @@ router.post("/likePost", async (req, res) => {
 
           userFound.markModified("doneChallenges")
           await userFound.save()
+          console.log("like added")
           postFound = true
           break
         }
@@ -182,6 +184,7 @@ router.post("/likePost", async (req, res) => {
       return res.status(400).send({ message: "Post to like not found" })
     }
     console.log(userFound)
+    console.log("inside /likePst")
     return res.status(200).send(userFound)
 
   } catch (error) {
