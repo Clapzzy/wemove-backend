@@ -158,8 +158,11 @@ router.post("/likePost", async (req, res) => {
     for (let i = 0; i < userFound.doneChallenges.length; i++) {
       if (userFound.doneChallenges[i]._id == req.body.postId) {
         if (userFound.doneChallenges[i].likedBy.includes(req.body.username)) {
+
           const postId = userFound.doneChallenges[i]._id
           const postInPostsFound = await posts.findOne({ _id: postId })
+          postInPostsFound.likes--
+          postInPostsFound.likedBy.pop(req.body.username)
           console.log(postInPostsFound)
 
           userFound.doneChallenges[i].likes--
@@ -172,6 +175,12 @@ router.post("/likePost", async (req, res) => {
           break
 
         } else {
+          const postId = userFound.doneChallenges[i]._id
+          const postInPostsFound = await posts.findOne({ _id: postId })
+          postInPostsFound.likes--
+          postInPostsFound.likedBy.pop(req.body.username)
+          console.log(postInPostsFound)
+
           userFound.doneChallenges[i].likes++
           userFound.doneChallenges[i].likedBy.push(req.body.username)
 
